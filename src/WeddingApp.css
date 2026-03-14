@@ -1,0 +1,899 @@
+/* app.css (Speechstakes "Editorial White" style) */
+
+/* Keep these scoped so you don't accidentally restyle Moxi */
+.ss-editorial {
+  --ss-bg: #f7f6f2;
+  --ss-paper: #fbfaf7;
+  --ss-ink: #111111;
+  --ss-muted: rgba(17, 17, 17, 0.62);
+  --ss-border: rgba(17, 17, 17, 0.14);
+  --ss-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
+
+  --ss-accent: #111111; /* monochrome */
+  --ss-gold: #c9b089; /* subtle champagne for ornament */
+  --ss-radius-xl: 26px;
+  --ss-radius-lg: 18px;
+  --ss-radius-md: 14px;
+
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px 16px;
+  /* padding-top: 60px; */
+  background:
+    radial-gradient(
+      900px 520px at 15% 10%,
+      rgba(0, 0, 0, 0.045),
+      transparent 55%
+    ),
+    radial-gradient(
+      700px 460px at 85% 25%,
+      rgba(0, 0, 0, 0.035),
+      transparent 60%
+    ),
+    linear-gradient(180deg, var(--ss-bg), #f2f1ed);
+  color: var(--ss-ink);
+}
+
+/* Card */
+.ss-card {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, var(--ss-paper), #f8f7f3);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius-xl);
+  box-shadow: var(--ss-shadow);
+  padding: 26px 22px 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft inner border for "paper" feel */
+.ss-card::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: calc(var(--ss-radius-xl) - 10px);
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  pointer-events: none;
+}
+
+/* Header */
+.ss-header {
+  text-align: center;
+  margin-bottom: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.ss-title {
+  margin: 8px 0 8px;
+  font-size: 34px;
+  line-height: 1.05;
+  letter-spacing: -0.6px;
+  font-weight: 800;
+}
+
+.ss-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ss-muted);
+  line-height: 1.35;
+}
+
+/* Ornament (dots + line) */
+.ss-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.ss-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--ss-gold);
+  opacity: 0.95;
+}
+
+.ss-line {
+  height: 1px;
+  width: 84px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(201, 176, 137, 0.85),
+    transparent
+  );
+}
+
+/* Form */
+.ss-form {
+  display: grid;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.ss-field {
+  display: grid;
+  gap: 8px;
+}
+
+.ss-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.15px;
+  color: rgba(17, 17, 17, 0.55);
+}
+
+.ss-input {
+  width: 100%;
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--ss-radius-md);
+  padding: 12px 12px;
+  font-size: 15px;
+  color: var(--ss-ink);
+  outline: none;
+  transition:
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.ss-input::placeholder {
+  color: rgba(17, 17, 17, 0.4);
+}
+
+.ss-input:focus {
+  border-color: rgba(17, 17, 17, 0.3);
+  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.1);
+}
+
+.ss-input:active {
+  transform: translateY(0.5px);
+}
+
+/* Slightly more "code" feel */
+.ss-input.ss-code {
+  letter-spacing: 2px;
+}
+
+/* Error */
+.ss-error {
+  border: 1px solid rgba(170, 30, 30, 0.22);
+  background: rgba(170, 30, 30, 0.06);
+  color: rgba(130, 20, 20, 0.95);
+  border-radius: var(--ss-radius-md);
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+/* Buttons */
+.ss-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 14px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    opacity 140ms ease,
+    background 140ms ease;
+}
+
+.ss-btn:active {
+  transform: translateY(1px);
+}
+
+.ss-btn--primary {
+  background: #111111;
+  color: #ffffff;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+}
+
+.ss-btn--primary:hover {
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.22);
+}
+
+.ss-btn--secondary {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(17, 17, 17, 0.18);
+  color: #111111;
+}
+
+.ss-btn--secondary:hover {
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Divider with "Hosting?" */
+.ss-divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 2px;
+}
+
+.ss-divider-line {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(17, 17, 17, 0.16),
+    transparent
+  );
+}
+
+.ss-divider-text {
+  font-size: 12px;
+  color: rgba(17, 17, 17, 0.55);
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+/* Footer link */
+.ss-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.ss-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  color: rgba(17, 17, 17, 0.65);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.ss-link:hover {
+  color: rgba(17, 17, 17, 0.85);
+  background: rgba(17, 17, 17, 0.05);
+}
+
+/* Small screens */
+@media (max-width: 380px) {
+  .ss-card {
+    padding: 22px 18px 16px;
+    border-radius: 22px;
+  }
+  .ss-title {
+    font-size: 30px;
+  }
+}
+
+/* Add to app.css (Speechstakes predictions screen additions) */
+
+/* Slightly wider card on this screen */
+.ss-card.ss-card--wide {
+  max-width: 520px;
+}
+
+/* Smaller title variant */
+.ss-title--sm {
+  font-size: 28px;
+}
+
+/* "You" line (editable name) */
+.ss-playerline {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  margin: 2px 0 14px;
+}
+
+.ss-playerline__label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  color: rgba(17, 17, 17, 0.55);
+}
+
+.ss-playerline__input {
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+/* List */
+.ss-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+/* Row */
+.ss-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 12px;
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.ss-row__name {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.ss-row__hint {
+  margin-top: 2px;
+  font-size: 12px;
+  color: rgba(17, 17, 17, 0.55);
+}
+
+/* Time selector */
+.ss-time {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.ss-time__group {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+}
+
+.ss-time__label {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.5);
+}
+
+.ss-time__colon {
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1;
+  padding-bottom: 10px;
+  color: rgba(17, 17, 17, 0.7);
+}
+
+/* Selects styled to look like the reference */
+.ss-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  min-width: 82px;
+  height: 44px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(17, 17, 17, 0.16);
+  background: rgba(255, 255, 255, 0.92);
+
+  font-size: 15px;
+  font-weight: 800;
+  color: #111111;
+
+  padding: 0 38px 0 14px;
+  outline: none;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(17, 17, 17, 0.75) 50%),
+    linear-gradient(135deg, rgba(17, 17, 17, 0.75) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%;
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+
+  transition:
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.ss-select:focus {
+  border-color: rgba(17, 17, 17, 0.28);
+  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.1);
+}
+
+/* Submit */
+.ss-submit {
+  width: 100%;
+}
+
+/* Footer muted */
+.ss-footer--muted {
+  margin-top: 12px;
+}
+
+.ss-footnote {
+  font-size: 12px;
+  color: rgba(17, 17, 17, 0.58);
+}
+
+/* Responsive tweaks */
+@media (max-width: 420px) {
+  .ss-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .ss-time {
+    justify-content: flex-start;
+  }
+  .ss-select {
+    min-width: 92px;
+  }
+}
+
+/* Add/replace in WeddingApp.css (row left content styling) */
+
+/* Replace previous name/hint styles if you had them */
+.ss-row__role {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: -0.2px;
+}
+
+.ss-row__person {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.ss-row__person-pill {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.8);
+  opacity: 0.9;
+}
+
+.ss-row__person-name {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  color: rgba(17, 17, 17, 0.8);
+}
+
+/* WeddingApp.css additions for the stylised wedding header */
+
+/* tighter subtitle spacing under the wedding title */
+.ss-subtitle--tight {
+  margin-top: 10px;
+}
+
+/* Wedding title block */
+.ss-wedding-header {
+  margin-bottom: 16px;
+}
+
+.ss-wedding-titleblock {
+  margin-top: 8px;
+}
+
+.ss-wedding-overline {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.2px;
+  color: rgba(17, 17, 17, 0.55);
+  margin-bottom: 10px;
+}
+
+/*
+  "Calligraphy vibe" without importing fonts:
+  Use a gentle italic + letter spacing and weight contrast.
+  If you later want true calligraphy, you can load a font like
+  "Playfair Display" or "Great Vibes" via Google Fonts.
+*/
+.ss-wedding-names {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ss-wedding-name {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1.05;
+  font-style: italic;
+}
+
+.ss-wedding-amp {
+  font-size: 18px;
+  font-weight: 700;
+  font-style: italic;
+  opacity: 0.8;
+  transform: translateY(-2px);
+}
+
+/* Elegant underline flourish */
+.ss-wedding-underline {
+  height: 1px;
+  width: 220px;
+  margin: 14px auto 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(17, 17, 17, 0.18),
+    transparent
+  );
+  position: relative;
+}
+
+.ss-wedding-underline::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  background: rgba(17, 17, 17, 0.45);
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+  .ss-wedding-name {
+    font-size: 26px;
+  }
+  .ss-wedding-underline {
+    width: 180px;
+  }
+}
+
+.wedding-create .ss-card--wide {
+  max-width: 560px;
+}
+
+/* Two-column grid */
+.ss-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 520px) {
+  .ss-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Section header */
+.ss-section {
+  margin-top: 4px;
+}
+
+.ss-section__title {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+.ss-section__hint {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(17, 17, 17, 0.55);
+}
+
+/* Stacked row for speaker cards */
+.ss-row--stack {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+/* Speaker row top bar */
+.ss-row__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ss-row__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: rgba(255, 255, 255, 0.74);
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(17, 17, 17, 0.75);
+}
+
+/* Minimal icon button (remove speaker) */
+.ss-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  background: rgba(255, 255, 255, 0.8);
+  color: rgba(17, 17, 17, 0.75);
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    opacity 140ms ease;
+}
+
+.ss-icon-btn:active {
+  transform: translateY(1px);
+}
+
+.ss-icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Full-width select variant */
+.ss-select--full {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Action row */
+.ss-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+@media (max-width: 520px) {
+  .ss-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Ghost button */
+.ss-btn--ghost {
+  border-radius: 999px;
+  padding: 13px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  background: transparent;
+  color: rgba(17, 17, 17, 0.75);
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background 140ms ease;
+}
+
+.ss-btn--ghost:hover {
+  background: rgba(17, 17, 17, 0.05);
+}
+
+.ss-btn--ghost:active {
+  transform: translateY(1px);
+}
+
+/* Created event panel */
+.ss-created {
+  margin-top: 14px;
+  padding: 14px 14px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.ss-created__label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  color: rgba(17, 17, 17, 0.55);
+}
+
+.ss-created__code {
+  margin-top: 6px;
+  font-size: 28px;
+  font-weight: 950;
+  letter-spacing: 4px;
+}
+
+.ss-created__hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(17, 17, 17, 0.55);
+  line-height: 1.35;
+}
+
+.ss-btn--full {
+  width: 100%;
+}
+.ss-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+.ss-modal-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+}
+
+.ss-modal-title {
+  margin: 0 0 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.ss-modal-text {
+  margin: 0 0 20px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+.wedding-header {
+  height: 64px;
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
+  align-items: center;
+  padding: 0 12px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.wedding-header__left,
+.wedding-header__right {
+  width: 40px;
+  height: 40px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 999px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.wedding-header__left:hover,
+.wedding-header__right:hover {
+  background: #f3f4f6;
+}
+
+.wedding-header__title {
+  justify-self: center;
+  text-decoration: none;
+  color: #111827;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.wedding-header__icon {
+  width: 24px;
+  height: 24px;
+  color: #000000;
+  flex-shrink: 0;
+  display: block;
+}
+
+.wedding-header__icon--account {
+  width: 26px;
+  height: 26px;
+}
+
+.wedding-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.35);
+  z-index: 1100;
+}
+
+.wedding-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(82vw, 320px);
+  height: 100vh;
+  padding: 88px 20px 24px;
+  background: #ffffff;
+  z-index: 1200;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+}
+
+.wedding-sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wedding-sidebar-list li + li {
+  margin-top: 10px;
+}
+
+.wedding-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  text-decoration: none;
+  color: #111827;
+  font-weight: 600;
+  border-radius: 14px;
+  transition: background 0.18s ease;
+}
+
+.wedding-nav-link:hover {
+  background: #f3f4f6;
+}
+
+.wedding-sidebar-item-icon {
+  width: 20px;
+  height: 20px;
+  color: #000000;
+  flex-shrink: 0;
+  display: block;
+}
+
+@keyframes weddingSlideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes weddingSlideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.wedding-sidebar.slide-in {
+  animation: weddingSlideIn 0.22s ease forwards;
+}
+
+.wedding-sidebar.slide-out {
+  animation: weddingSlideOut 0.2s ease forwards;
+}

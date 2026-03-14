@@ -1,0 +1,108 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: #09161f;
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --bg-0: #0a1017; /* deepest */
+  --bg-1: #0e1622; /* base */
+  --bg-2: #111c2a; /* slightly lighter */
+  --bg-3: #0c1320; /* vignette */
+
+  /* Surfaces (cards, panels) */
+  --surface: rgba(255, 255, 255, 0.045);
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --stroke: rgba(255, 255, 255, 0.075);
+  --stroke-2: rgba(255, 255, 255, 0.11);
+
+  /* Text */
+  --text: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.68);
+  --subtle: rgba(255, 255, 255, 0.5);
+
+  /* Accent (teal-ish like the screenshot) */
+  --accent: #5fd0e6;
+  --accent-2: #2aa6c8;
+
+  /* Shadows */
+  --shadow-1: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-2: 0 20px 60px rgba(0, 0, 0, 0.55);
+
+  /* Radius */
+  --r-lg: 18px;
+  --r-md: 14px;
+
+  /* Focus */
+  --focus: 0 0 0 3px rgba(95, 208, 230, 0.22);
+
+  /* Blur */
+  --blur: 14px;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #09161f;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #09161f;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
