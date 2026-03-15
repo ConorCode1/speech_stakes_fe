@@ -35,14 +35,7 @@ export default function WeddingHostLogin() {
         },
       );
 
-      const raw = await response.text();
-
-      let data = {};
-      try {
-        data = raw ? JSON.parse(raw) : {};
-      } catch {
-        throw new Error("Server returned an unexpected response.");
-      }
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || "Failed to load host events.");
@@ -83,32 +76,6 @@ export default function WeddingHostLogin() {
     checkExistingHost();
   }, [routeHostUser]);
 
-  async function postToEndpoint(endpoint, emailValue) {
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}${endpoint}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: emailValue,
-        }),
-      },
-    );
-
-    const raw = await response.text();
-
-    let data = {};
-    try {
-      data = raw ? JSON.parse(raw) : {};
-    } catch {
-      throw new Error("Server returned an unexpected response.");
-    }
-
-    return { response, data };
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
@@ -121,36 +88,20 @@ export default function WeddingHostLogin() {
     try {
       setSubmitting(true);
 
-      let result;
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/wedding/host/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: cleanedEmail,
+          }),
+        },
+      );
 
-      if (mode === "create") {
-        result = await postToEndpoint(
-          "/api/wedding/host/register",
-          cleanedEmail,
-        );
-
-        if (!result.response.ok) {
-          const message = String(result.data?.error || "").toLowerCase();
-
-          const alreadyExists =
-            result.response.status === 409 ||
-            message.includes("already exists") ||
-            message.includes("already registered") ||
-            message.includes("account exists") ||
-            message.includes("user exists");
-
-          if (alreadyExists) {
-            result = await postToEndpoint(
-              "/api/wedding/host/login",
-              cleanedEmail,
-            );
-          }
-        }
-      } else {
-        result = await postToEndpoint("/api/wedding/host/login", cleanedEmail);
-      }
-
-      const { response, data } = result;
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -166,6 +117,9 @@ export default function WeddingHostLogin() {
         JSON.stringify({
           userId: data.user.user_id,
           email: data.user.email,
+          fullName: data.user.full_name || "",
+          membershipStatus: data.user.membership_status || "free",
+          membershipExpiresAt: data.user.membership_expires_at || null,
         }),
       );
 
@@ -195,21 +149,9 @@ export default function WeddingHostLogin() {
       <div className="screen wedding-home ss-editorial">
         <div className="ss-card">
           <div className="ss-header">
-            <div className="ss-ornament" aria-hidden="true">
-              <span className="ss-dot" />
-              <span className="ss-line" />
-              <span className="ss-dot" />
-            </div>
-
             <h1 className="ss-title">
               {mode === "create" ? "Create Account" : "Sign In"}
             </h1>
-
-            <p className="ss-subtitle">
-              {mode === "create"
-                ? "Use your email to create and manage wedding events."
-                : "Enter your email to access your wedding events."}
-            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="ss-form">

@@ -40,7 +40,7 @@ function toMinutesSeconds(totalSeconds) {
 
   return {
     minutes: String(Math.floor(safe / 60)),
-    seconds: String(safe % 60),
+    seconds: String(safe % 60).padStart(2, "0"),
   };
 }
 
@@ -474,78 +474,50 @@ export default function WeddingManageEvent() {
 
   return (
     <div className="screen ss-editorial wedding-create">
-      <div className="ss-card ss-card--wide">
-        <div className="ss-form" style={{ marginBottom: "1.5rem" }}>
-          <div className="ss-section">
-            <div className="ss-section__title">Event management</div>
-            <div className="ss-section__hint">
-              Switch between your events or create a new one.
-            </div>
+      <div className="ss-card ss-card--wide ss-manage-card">
+        <div className="ss-manage-toolbar">
+          <div className="ss-field">
+            <label className="ss-label">Your events</label>
+            <select
+              className="ss-select ss-select--full"
+              value={eventId || ""}
+              onChange={handleEventChange}
+              disabled={eventsLoading || saving || hostEvents.length === 0}
+            >
+              {eventsLoading ? (
+                <option value="">Loading events...</option>
+              ) : hostEvents.length === 0 ? (
+                <option value="">No events found</option>
+              ) : (
+                hostEvents.map((event) => (
+                  <option key={event.event_id} value={event.event_id}>
+                    {formatEventOptionLabel(event)}
+                  </option>
+                ))
+              )}
+            </select>
           </div>
 
-          <div className="ss-grid-2">
-            <div className="ss-field">
-              <label className="ss-label">Your events</label>
-              <select
-                className="ss-select ss-select--full"
-                value={eventId || ""}
-                onChange={handleEventChange}
-                disabled={eventsLoading || saving || hostEvents.length === 0}
-              >
-                {eventsLoading ? (
-                  <option value="">Loading events...</option>
-                ) : hostEvents.length === 0 ? (
-                  <option value="">No events found</option>
-                ) : (
-                  hostEvents.map((event) => (
-                    <option key={event.event_id} value={event.event_id}>
-                      {formatEventOptionLabel(event)}
-                    </option>
-                  ))
-                )}
-              </select>
-            </div>
-
-            <div className="ss-field">
-              <label className="ss-label">Create</label>
-              <button
-                type="button"
-                className="ss-btn ss-btn--primary ss-btn--full"
-                onClick={handleCreateNewEvent}
-              >
-                Create new event
-              </button>
-            </div>
-          </div>
+          <button
+            type="button"
+            className="ss-btn ss-btn--primary ss-manage-toolbar__create"
+            onClick={handleCreateNewEvent}
+          >
+            Create new event
+          </button>
         </div>
 
-        <div className="ss-header ss-wedding-header">
-          <div className="ss-wedding-titleblock">
-            <div className="ss-wedding-overline">Manage Event</div>
-            <div className="ss-wedding-names">
-              <span className="ss-wedding-name">{coupleLabel}</span>
-            </div>
-            <div className="ss-wedding-underline" aria-hidden="true" />
+        <div className="ss-manage-hero">
+          <div className="ss-wedding-overline">Manage Event</div>
+
+          <div className="ss-manage-hero__title">{coupleLabel}</div>
+
+          <div className="ss-meta-pills">
+            <span className="ss-meta-pill">Code {eventData?.join_code}</span>
+            <span className="ss-meta-pill">{statusLabel}</span>
           </div>
 
-          <p className="ss-subtitle ss-subtitle--tight">
-            Join code: {eventData?.join_code} | Status: {statusLabel}
-          </p>
-        </div>
-
-        {error ? <div className="ss-error">{error}</div> : null}
-
-        <div className="ss-form">
-          {isCompleted ? (
-            <div className="ss-row ss-row--stack">
-              <div className="ss-section__hint">
-                This event has been completed. You can still view the results,
-                but speech times can no longer be changed.
-              </div>
-            </div>
-          ) : null}
-
-          <div className="ss-actions">
+          <div className="ss-manage-hero__actions">
             <button
               type="button"
               className="ss-btn ss-btn--ghost"
@@ -555,210 +527,211 @@ export default function WeddingManageEvent() {
               {showEditDetails ? "Hide details" : "Edit wedding details"}
             </button>
           </div>
+        </div>
 
-          {showEditDetails ? (
-            <div className="ss-row ss-row--stack">
-              <div className="ss-grid-2">
-                <div className="ss-field">
-                  <label className="ss-label">Bride first name</label>
-                  <input
-                    className="ss-input"
-                    value={brideName}
-                    onChange={(e) => setBrideName(e.target.value)}
-                    disabled={!canEdit}
-                  />
-                </div>
+        {error ? <div className="ss-error">{error}</div> : null}
 
-                <div className="ss-field">
-                  <label className="ss-label">Groom first name</label>
-                  <input
-                    className="ss-input"
-                    value={groomName}
-                    onChange={(e) => setGroomName(e.target.value)}
-                    disabled={!canEdit}
-                  />
-                </div>
-              </div>
-
-              <div className="ss-actions">
-                <button
-                  type="button"
-                  className="ss-btn ss-btn--primary"
-                  onClick={handleSaveEventDetails}
-                  disabled={!canEdit || saving}
-                >
-                  Save details
-                </button>
-              </div>
-            </div>
-          ) : null}
-
-          <div className="ss-section">
-            <div className="ss-section__title">Speakers</div>
+        {isCompleted ? (
+          <div className="ss-row ss-row--stack">
             <div className="ss-section__hint">
-              {isCompleted
-                ? "Speech times are locked for this completed event."
-                : "Enter the actual speech time for each speaker."}
+              This event has been completed. You can still view the results, but
+              speech times can no longer be changed.
             </div>
           </div>
+        ) : null}
 
-          <div className="ss-list">
-            {speakers.map((speaker, idx) => (
-              <div className="ss-row ss-row--stack" key={speaker.speaker_id}>
-                <div className="ss-row__top">
-                  <div>
-                    <div className="ss-row__badge">Speaker {idx + 1}</div>
-                    <div
-                      style={{
-                        marginTop: 8,
-                        fontWeight: 700,
-                        fontSize: "1.05rem",
-                      }}
-                    >
-                      {speaker.personName}
-                    </div>
-                    <div className="ss-section__hint">{speaker.role}</div>
-                  </div>
+        {showEditDetails ? (
+          <div className="ss-panel">
+            <div className="ss-section">
+              <div className="ss-section__title">Wedding details</div>
+            </div>
 
-                  {canEdit ? (
-                    <button
-                      type="button"
-                      className="ss-icon-btn"
-                      onClick={() => handleDeleteSpeaker(speaker.speaker_id)}
-                      disabled={saving}
-                      title="Remove speaker"
-                    >
-                      ×
-                    </button>
-                  ) : null}
-                </div>
-
-                <div
-                  className="ss-grid-2"
-                  style={{ gridTemplateColumns: "1fr 1fr", gap: "12px" }}
-                >
-                  <div className="ss-field">
-                    <label className="ss-label">Minutes</label>
-                    <input
-                      className="ss-input"
-                      type="number"
-                      min="0"
-                      value={speaker.actualMinutes}
-                      onChange={(e) =>
-                        updateSpeakerLocal(speaker.speaker_id, {
-                          actualMinutes: e.target.value,
-                        })
-                      }
-                      disabled={!canEdit || saving}
-                    />
-                  </div>
-
-                  <div className="ss-field">
-                    <label className="ss-label">Seconds</label>
-                    <input
-                      className="ss-input"
-                      type="number"
-                      min="0"
-                      max="59"
-                      value={speaker.actualSeconds}
-                      onChange={(e) =>
-                        updateSpeakerLocal(speaker.speaker_id, {
-                          actualSeconds: e.target.value,
-                        })
-                      }
-                      disabled={!canEdit || saving}
-                    />
-                  </div>
-                </div>
-
-                {!isCompleted ? (
-                  <div className="ss-actions">
-                    <button
-                      type="button"
-                      className="ss-btn ss-btn--secondary"
-                      onClick={() => handleSaveActualTime(speaker)}
-                      disabled={saving}
-                    >
-                      Save time
-                    </button>
-                  </div>
-                ) : null}
+            <div className="ss-grid-2">
+              <div className="ss-field">
+                <label className="ss-label">Bride first name</label>
+                <input
+                  className="ss-input"
+                  value={brideName}
+                  onChange={(e) => setBrideName(e.target.value)}
+                  disabled={!canEdit}
+                />
               </div>
-            ))}
+
+              <div className="ss-field">
+                <label className="ss-label">Groom first name</label>
+                <input
+                  className="ss-input"
+                  value={groomName}
+                  onChange={(e) => setGroomName(e.target.value)}
+                  disabled={!canEdit}
+                />
+              </div>
+            </div>
+
+            <div className="ss-actions">
+              <button
+                type="button"
+                className="ss-btn ss-btn--primary"
+                onClick={handleSaveEventDetails}
+                disabled={!canEdit || saving}
+              >
+                Save details
+              </button>
+            </div>
           </div>
+        ) : null}
 
-          {canEdit ? (
-            <>
-              <div className="ss-section">
-                <div className="ss-section__title">Add speaker</div>
-                <div className="ss-section__hint">
-                  Add another speaker to the running order.
-                </div>
-              </div>
+        <div className="ss-section ss-section--speakers">
+          <div className="ss-section__title">Speakers</div>
+          <div className="ss-section__hint">
+            {isCompleted
+              ? "Speech times are locked for this completed event."
+              : "Enter the actual speech time for each speaker."}
+          </div>
+        </div>
 
-              <div className="ss-row ss-row--stack">
-                <div className="ss-grid-2">
-                  <div className="ss-field">
-                    <label className="ss-label">Speaker name</label>
-                    <input
-                      className="ss-input"
-                      value={newSpeakerName}
-                      onChange={(e) => setNewSpeakerName(e.target.value)}
-                      placeholder="e.g. James"
-                    />
-                  </div>
+        <div className="ss-list ss-list--speakers">
+          {speakers.map((speaker, idx) => (
+            <div className="ss-speaker-card" key={speaker.speaker_id}>
+              <div className="ss-speaker-card__top">
+                <span className="ss-row__badge">Speaker {idx + 1}</span>
 
-                  <div className="ss-field">
-                    <label className="ss-label">Role</label>
-                    <select
-                      className="ss-select ss-select--full"
-                      value={newSpeakerRole}
-                      onChange={(e) => setNewSpeakerRole(e.target.value)}
-                    >
-                      {ROLE_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="ss-actions">
+                {canEdit ? (
                   <button
                     type="button"
-                    className="ss-btn ss-btn--secondary"
-                    onClick={handleAddSpeaker}
+                    className="ss-icon-btn"
+                    onClick={() => handleDeleteSpeaker(speaker.speaker_id)}
                     disabled={saving}
+                    title="Remove speaker"
                   >
-                    Add speaker
+                    ×
                   </button>
+                ) : null}
+              </div>
+
+              <div className="ss-speaker-card__name">{speaker.personName}</div>
+              <div className="ss-speaker-card__role">{speaker.role}</div>
+
+              <div className="ss-time-entry">
+                <div className="ss-time-entry__group">
+                  <label className="ss-label">Min</label>
+                  <input
+                    className="ss-input ss-input--time"
+                    type="number"
+                    min="0"
+                    value={speaker.actualMinutes}
+                    onChange={(e) =>
+                      updateSpeakerLocal(speaker.speaker_id, {
+                        actualMinutes: e.target.value,
+                      })
+                    }
+                    disabled={!canEdit || saving}
+                  />
+                </div>
+
+                <div className="ss-time-entry__colon">:</div>
+
+                <div className="ss-time-entry__group">
+                  <label className="ss-label">Sec</label>
+                  <input
+                    className="ss-input ss-input--time"
+                    type="number"
+                    min="0"
+                    max="59"
+                    value={speaker.actualSeconds}
+                    onChange={(e) =>
+                      updateSpeakerLocal(speaker.speaker_id, {
+                        actualSeconds: e.target.value,
+                      })
+                    }
+                    disabled={!canEdit || saving}
+                  />
                 </div>
               </div>
-            </>
-          ) : null}
 
-          <div className="ss-actions">
-            {!isCompleted ? (
+              {!isCompleted ? (
+                <button
+                  type="button"
+                  className="ss-btn ss-btn--secondary ss-btn--compact"
+                  onClick={() => handleSaveActualTime(speaker)}
+                  disabled={saving}
+                >
+                  Save time
+                </button>
+              ) : null}
+            </div>
+          ))}
+        </div>
+
+        {canEdit ? (
+          <div className="ss-panel ss-panel--add-speaker">
+            <div className="ss-section">
+              <div className="ss-section__title">Add speaker</div>
+              <div className="ss-section__hint">
+                Add another speaker to the running order.
+              </div>
+            </div>
+
+            <div className="ss-grid-2">
+              <div className="ss-field">
+                <label className="ss-label">Speaker name</label>
+                <input
+                  className="ss-input"
+                  value={newSpeakerName}
+                  onChange={(e) => setNewSpeakerName(e.target.value)}
+                  placeholder="e.g. James"
+                />
+              </div>
+
+              <div className="ss-field">
+                <label className="ss-label">Role</label>
+                <select
+                  className="ss-select ss-select--full"
+                  value={newSpeakerRole}
+                  onChange={(e) => setNewSpeakerRole(e.target.value)}
+                >
+                  {ROLE_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="ss-actions">
               <button
                 type="button"
-                className="ss-btn ss-btn--primary"
-                onClick={() => setShowCompleteConfirm(true)}
+                className="ss-btn ss-btn--secondary"
+                onClick={handleAddSpeaker}
                 disabled={saving}
               >
-                Everyone has spoken
+                Add speaker
               </button>
-            ) : (
-              <button
-                type="button"
-                className="ss-btn ss-btn--primary"
-                onClick={handleGoToResults}
-                disabled={!eventData?.join_code}
-              >
-                See results
-              </button>
-            )}
+            </div>
           </div>
+        ) : null}
+
+        <div className="ss-manage-footer">
+          {!isCompleted ? (
+            <button
+              type="button"
+              className="ss-btn ss-btn--primary ss-btn--final"
+              onClick={() => setShowCompleteConfirm(true)}
+              disabled={saving}
+            >
+              Everyone has spoken
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="ss-btn ss-btn--primary ss-btn--final"
+              onClick={handleGoToResults}
+              disabled={!eventData?.join_code}
+            >
+              See results
+            </button>
+          )}
         </div>
       </div>
 

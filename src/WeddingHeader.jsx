@@ -1,7 +1,17 @@
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
 import "./WeddingApp.css";
+
+const LS_WEDDING_HOST_USER_KEY = "wedding_host_user_v1";
+
+function safeJsonParse(value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
 
 export default function WeddingHeader() {
   const location = useLocation();
@@ -9,8 +19,28 @@ export default function WeddingHeader() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarClosing, setSidebarClosing] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
 
   const isWeddingHome = location.pathname === "/";
+
+  const hostUser = safeJsonParse(
+    localStorage.getItem(LS_WEDDING_HOST_USER_KEY),
+  );
+
+  const isLoggedIn = Boolean(hostUser?.userId && hostUser?.email);
+
+  const displayName = useMemo(() => {
+    if (!hostUser?.email) return "Guest";
+
+    if (hostUser.name) return hostUser.name;
+
+    const emailPrefix = String(hostUser.email).split("@")[0] || "";
+    if (!emailPrefix) return hostUser.email;
+
+    return emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+  }, [hostUser]);
+
+  const subscriptionStatus = hostUser?.subscriptionStatus || "Free";
 
   function openMenu() {
     setSidebarClosing(false);
@@ -44,7 +74,18 @@ export default function WeddingHeader() {
   }
 
   function handleAccountClick() {
-    console.log("Open wedding account modal");
+    if (!isLoggedIn) {
+      navigate("/weddinghostlogin");
+      return;
+    }
+
+    setShowAccountModal(true);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem(LS_WEDDING_HOST_USER_KEY);
+    setShowAccountModal(false);
+    navigate("/weddinghostlogin");
   }
 
   return (
@@ -59,19 +100,22 @@ export default function WeddingHeader() {
           {isWeddingHome ? (
             <Icon icon="mdi:menu" className="wedding-header__icon" />
           ) : (
-            <Icon icon="mdi:home-outline" className="wedding-header__icon" />
+            <Icon
+              icon="material-symbols:home-outline-rounded"
+              className="wedding-header__icon"
+            />
           )}
         </button>
 
         <Link to="/" className="wedding-header__title" onClick={closeMenu}>
-          Speechstakes
+          SpeechStakes
         </Link>
 
         <button
           type="button"
           className="wedding-header__right"
           onClick={handleAccountClick}
-          aria-label="Account"
+          aria-label={isLoggedIn ? "Open account" : "Go to login"}
         >
           <Icon
             icon="mdi:account-circle-outline"
@@ -79,6 +123,7 @@ export default function WeddingHeader() {
           />
         </button>
       </header>
+
       {isWeddingHome && (menuOpen || sidebarClosing) && (
         <>
           <div className="wedding-sidebar-overlay" onClick={closeMenu} />
@@ -130,6 +175,70 @@ export default function WeddingHeader() {
             </ul>
           </aside>
         </>
+      )}
+
+      {showAccountModal && (
+        <div
+          className="ss-modal-backdrop"
+          onClick={() => setShowAccountModal(false)}
+        >
+          <div
+            className="ss-modal-card ss-account-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="ss-account-modal__header">
+              <h3 className="ss-modal-title">Your account</h3>
+
+              <button
+                type="button"
+                className="ss-icon-btn"
+                onClick={() => setShowAccountModal(false)}
+                aria-label="Close account modal"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="ss-account-modal__body">
+              <div className="ss-account-row">
+                <div className="ss-account-row__label">Username</div>
+                <div className="ss-account-row__value">{displayName}</div>
+              </div>
+
+              <div className="ss-account-row">
+                <div className="ss-account-row__label">Email</div>
+                <div className="ss-account-row__value">
+                  {hostUser?.email || "-"}
+                </div>
+              </div>
+
+              <div className="ss-account-row">
+                <div className="ss-account-row__label">Subscription</div>
+                <div className="ss-account-row__value">
+                  {subscriptionStatus}
+                </div>
+              </div>
+            </div>
+
+            <div className="ss-actions">
+              <button
+                type="button"
+                className="ss-btn ss-btn--ghost"
+                onClick={() => setShowAccountModal(false)}
+              >
+                Close
+              </button>
+
+              <button
+                type="button"
+                className="ss-btn ss-btn--primary"
+                onClick={handleLogout}
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
