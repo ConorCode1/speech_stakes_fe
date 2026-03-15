@@ -96,13 +96,13 @@ export default function WeddingHome() {
 
             {error ? <div className="ss-error">{error}</div> : null}
 
-            <button type="submit" className="ss-btn ss-btn--primary">
+            <button type="submit" className="join-button">
               Join
             </button>
 
             <button
               type="button"
-              className="ss-btn ss-btn--secondary"
+              className="host-button"
               onClick={handleCreate}
             >
               Host game

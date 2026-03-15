@@ -79,7 +79,6 @@ export default function WeddingHeader() {
           />
         </button>
       </header>
-
       {isWeddingHome && (menuOpen || sidebarClosing) && (
         <>
           <div className="wedding-sidebar-overlay" onClick={closeMenu} />

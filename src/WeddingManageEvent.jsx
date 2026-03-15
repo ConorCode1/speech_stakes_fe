@@ -95,7 +95,7 @@ export default function WeddingManageEvent() {
   const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
 
   const hostUser = safeJsonParse(
-    localStorage.getItem(LS_WEDDING_HOST_USER_KEY)
+    localStorage.getItem(LS_WEDDING_HOST_USER_KEY),
   );
   const hostUserId = hostUser?.userId || "";
 
@@ -130,7 +130,7 @@ export default function WeddingManageEvent() {
           headers: {
             "x-wedding-host-user-id": hostUserId,
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -164,7 +164,7 @@ export default function WeddingManageEvent() {
           headers: {
             "x-wedding-host-user-id": hostUserId,
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -188,7 +188,7 @@ export default function WeddingManageEvent() {
             actualMinutes: split.minutes,
             actualSeconds: split.seconds,
           };
-        })
+        }),
       );
 
       setShowCompleteConfirm(false);
@@ -212,8 +212,8 @@ export default function WeddingManageEvent() {
   function updateSpeakerLocal(speakerId, patch) {
     setSpeakers((prev) =>
       prev.map((speaker) =>
-        speaker.speaker_id === speakerId ? { ...speaker, ...patch } : speaker
-      )
+        speaker.speaker_id === speakerId ? { ...speaker, ...patch } : speaker,
+      ),
     );
   }
 
@@ -224,7 +224,7 @@ export default function WeddingManageEvent() {
   }
 
   function handleCreateNewEvent() {
-    navigate("/wedding/create");
+    navigate("/weddingcreateevent");
   }
 
   async function handleSaveEventDetails() {
@@ -246,7 +246,7 @@ export default function WeddingManageEvent() {
             brideName: brideName.trim(),
             groomName: groomName.trim(),
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -264,8 +264,8 @@ export default function WeddingManageEvent() {
         prev.map((event) =>
           String(event.event_id) === String(eventId)
             ? { ...event, ...data.event }
-            : event
-        )
+            : event,
+        ),
       );
 
       setShowEditDetails(false);
@@ -296,7 +296,7 @@ export default function WeddingManageEvent() {
             personName: newSpeakerName.trim(),
             role: newSpeakerRole,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -340,7 +340,7 @@ export default function WeddingManageEvent() {
           headers: {
             "x-wedding-host-user-id": hostUserId,
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -350,7 +350,7 @@ export default function WeddingManageEvent() {
       }
 
       setSpeakers((prev) =>
-        prev.filter((speaker) => speaker.speaker_id !== speakerId)
+        prev.filter((speaker) => speaker.speaker_id !== speakerId),
       );
     } catch (err) {
       console.error(err);
@@ -365,7 +365,7 @@ export default function WeddingManageEvent() {
 
     const totalSeconds = toTotalSeconds(
       speaker.actualMinutes,
-      speaker.actualSeconds
+      speaker.actualSeconds,
     );
 
     if (totalSeconds == null) {
@@ -388,7 +388,7 @@ export default function WeddingManageEvent() {
           body: JSON.stringify({
             actualSeconds: totalSeconds,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -425,7 +425,7 @@ export default function WeddingManageEvent() {
           headers: {
             "x-wedding-host-user-id": hostUserId,
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -443,8 +443,8 @@ export default function WeddingManageEvent() {
         prev.map((event) =>
           String(event.event_id) === String(eventId)
             ? { ...event, ...data.event }
-            : event
-        )
+            : event,
+        ),
       );
 
       setShowCompleteConfirm(false);
