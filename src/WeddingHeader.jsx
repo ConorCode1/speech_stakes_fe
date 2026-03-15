@@ -10,7 +10,7 @@ export default function WeddingHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarClosing, setSidebarClosing] = useState(false);
 
-  const isWeddingHome = location.pathname === "/weddinghome";
+  const isWeddingHome = location.pathname === "/";
 
   function openMenu() {
     setSidebarClosing(false);
@@ -40,7 +40,7 @@ export default function WeddingHeader() {
       return;
     }
 
-    navigate("/weddinghome");
+    navigate("/");
   }
 
   function handleAccountClick() {
@@ -63,11 +63,7 @@ export default function WeddingHeader() {
           )}
         </button>
 
-        <Link
-          to="/weddinghome"
-          className="wedding-header__title"
-          onClick={closeMenu}
-        >
+        <Link to="/" className="wedding-header__title" onClick={closeMenu}>
           Speechstakes
         </Link>
 
@@ -83,6 +79,7 @@ export default function WeddingHeader() {
           />
         </button>
       </header>
+
       {isWeddingHome && (menuOpen || sidebarClosing) && (
         <>
           <div className="wedding-sidebar-overlay" onClick={closeMenu} />
@@ -95,11 +92,7 @@ export default function WeddingHeader() {
           >
             <ul className="wedding-sidebar-list">
               <li>
-                <Link
-                  to="/weddinghome"
-                  className="wedding-nav-link"
-                  onClick={closeMenu}
-                >
+                <Link to="/" className="wedding-nav-link" onClick={closeMenu}>
                   <Icon
                     icon="mdi:home-outline"
                     className="wedding-sidebar-item-icon"

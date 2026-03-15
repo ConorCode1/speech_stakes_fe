@@ -16,19 +16,15 @@
   --ss-border-strong: rgba(17, 17, 17, 0.18);
   --ss-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
   --ss-shadow-strong: 0 16px 40px rgba(0, 0, 0, 0.18);
-
   --ss-accent: #111111;
   --ss-gold: #c9b089;
-
   --ss-radius-xl: 26px;
   --ss-radius-lg: 18px;
   --ss-radius-md: 14px;
   --ss-radius-pill: 999px;
-
-  min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 28px 16px;
+  /* padding: 28px 16px; */
   background:
     radial-gradient(
       900px 520px at 15% 10%,
@@ -50,11 +46,10 @@
 
 .ss-card {
   position: relative;
-  width: 100%;
+  width: 88%;
   max-width: 440px;
   padding: 26px 22px 18px;
   overflow: hidden;
-
   background: linear-gradient(180deg, var(--ss-paper), var(--ss-paper-2));
   border: 1px solid var(--ss-border);
   border-radius: var(--ss-radius-xl);
@@ -233,11 +228,10 @@
   text-transform: uppercase;
   color: var(--ss-subtle);
 }
-
 .ss-input,
 .ss-select {
   width: 100%;
-  font-size: 15px;
+  font-size: 1rem;
   color: var(--ss-ink);
   outline: none;
   transition:
@@ -248,27 +242,31 @@
 }
 
 .ss-input {
-  padding: 12px;
+  min-height: 60px;
   border: 1px solid var(--ss-border);
   border-radius: var(--ss-radius-md);
   background: rgba(255, 255, 255, 0.8);
+  padding: 0 12px 0 52px;
 }
 
 .ss-input::placeholder {
   color: rgba(17, 17, 17, 0.4);
 }
 
-.ss-input:focus {
-  border-color: rgba(17, 17, 17, 0.3);
-  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.1);
+.ss-input-wrap {
+  position: relative;
+  width: 100%;
 }
 
-.ss-input:active {
-  transform: translateY(0.5px);
-}
-
-.ss-input.ss-code {
-  letter-spacing: 2px;
+.ss-input-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 25px;
+  color: rgba(17, 17, 17, 0.169);
+  pointer-events: none;
 }
 
 /* =========================================================
@@ -375,7 +373,7 @@
   border: 0;
   border-radius: var(--ss-radius-pill);
   padding: 13px 14px;
-  font-size: 15px;
+  font-size: 1.2rem;
   font-weight: 800;
   cursor: pointer;
   transition:
@@ -383,6 +381,7 @@
     box-shadow 140ms ease,
     opacity 140ms ease,
     background 140ms ease;
+  height: 60px;
 }
 
 .ss-btn:active {
@@ -401,7 +400,7 @@
 
 .ss-btn--secondary {
   color: #111111;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.491);
   border: 1px solid var(--ss-border-strong);
 }
 
@@ -730,17 +729,15 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-
   display: grid;
-  grid-template-columns: 56px 1fr 56px;
+  grid-template-columns: 56px 1fr 40px;
   align-items: center;
-
-  height: 64px;
-  padding: 0 12px;
-
+  height: 50px;
+  padding: 0px 5px;
   background: rgba(251, 250, 247, 0.96);
   border-bottom: 1px solid rgba(17, 17, 17, 0.08);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .wedding-header__left,
@@ -750,21 +747,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   margin: 0;
   padding: 0;
-
   background: transparent;
   border: none;
   border-radius: 999px;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
-}
-
-.wedding-header__left:hover,
-.wedding-header__right:hover {
-  background: rgba(17, 17, 17, 0.05);
 }
 
 .wedding-header__title {
@@ -777,16 +767,16 @@
 }
 
 .wedding-header__icon {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   display: block;
   flex-shrink: 0;
   color: #000000;
 }
 
 .wedding-header__icon--account {
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
 }
 
 /* =========================================================
@@ -923,4 +913,21 @@
   .ss-title {
     font-size: 30px;
   }
+}
+
+.home-container {
+  min-height: calc(100vh - 50px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: -60px;
+}
+
+.screen.wedding-home {
+  margin: 0;
+  min-height: calc(100vh - 50px);
+  min-width: 100vw;
 }

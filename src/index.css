@@ -55,7 +55,7 @@ body,
 html {
   background: var(--ss-bg);
 }
-
+/* 
 body {
   min-width: 320px;
   min-height: 100vh;
@@ -187,11 +187,6 @@ p {
   min-height: 100%;
 }
 
-/* Optional shared layout helpers */
-.screen {
-  min-height: 100vh;
-}
-
 .ss-editorial {
   min-height: 100vh;
   display: grid;
@@ -232,4 +227,4 @@ p {
 
 .ss-subtitle {
   color: var(--ss-muted);
-}
+} */

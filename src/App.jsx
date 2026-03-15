@@ -19,7 +19,7 @@ function AppContent() {
       <Suspense fallback={<p>Loading...</p>}>
         <Routes>
           <Route path="/" element={<WeddingHome />} />
-          <Route path="/weddinghome" element={<WeddingHome />} />
+
           <Route
             path="/weddingpredictionselection"
             element={<WeddingPredictionSelection />}

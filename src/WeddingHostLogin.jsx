@@ -37,7 +37,7 @@ export default function WeddingHostLogin() {
           body: JSON.stringify({
             email: cleanedEmail,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -51,7 +51,7 @@ export default function WeddingHostLogin() {
         JSON.stringify({
           userId: data.user.user_id,
           email: data.user.email,
-        })
+        }),
       );
 
       navigate("/weddingcreateevent");
@@ -64,47 +64,49 @@ export default function WeddingHostLogin() {
   }
 
   return (
-    <div className="screen wedding-home ss-editorial">
-      <div className="ss-card">
-        <div className="ss-header">
-          <div className="ss-ornament" aria-hidden="true">
-            <span className="ss-dot" />
-            <span className="ss-line" />
-            <span className="ss-dot" />
+    <div className="home-container">
+      <div className="screen wedding-home ss-editorial">
+        <div className="ss-card">
+          <div className="ss-header">
+            <div className="ss-ornament" aria-hidden="true">
+              <span className="ss-dot" />
+              <span className="ss-line" />
+              <span className="ss-dot" />
+            </div>
+
+            <h1 className="ss-title">Host Sign In</h1>
+            <p className="ss-subtitle">
+              Enter your email to create and manage events.
+            </p>
           </div>
 
-          <h1 className="ss-title">Host Sign In</h1>
-          <p className="ss-subtitle">
-            Enter your email to create and manage events.
-          </p>
+          <form onSubmit={handleSubmit} className="ss-form">
+            <div className="ss-field">
+              <label className="ss-label" htmlFor="hostEmail">
+                Email
+              </label>
+              <input
+                id="hostEmail"
+                className="ss-input"
+                type="email"
+                placeholder="e.g. you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+              />
+            </div>
+
+            {error ? <div className="ss-error">{error}</div> : null}
+
+            <button
+              type="submit"
+              className="ss-btn ss-btn--primary"
+              disabled={submitting}
+            >
+              {submitting ? "Signing in..." : "Continue"}
+            </button>
+          </form>
         </div>
-
-        <form onSubmit={handleSubmit} className="ss-form">
-          <div className="ss-field">
-            <label className="ss-label" htmlFor="hostEmail">
-              Email
-            </label>
-            <input
-              id="hostEmail"
-              className="ss-input"
-              type="email"
-              placeholder="e.g. you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-            />
-          </div>
-
-          {error ? <div className="ss-error">{error}</div> : null}
-
-          <button
-            type="submit"
-            className="ss-btn ss-btn--primary"
-            disabled={submitting}
-          >
-            {submitting ? "Signing in..." : "Continue"}
-          </button>
-        </form>
       </div>
     </div>
   );
