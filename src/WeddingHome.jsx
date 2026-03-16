@@ -105,7 +105,7 @@ export default function WeddingHome() {
               className="host-button"
               onClick={handleCreate}
             >
-              Host game
+              Host event
             </button>
           </form>
         </div>

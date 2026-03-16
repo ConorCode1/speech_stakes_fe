@@ -31,6 +31,12 @@ function clamp(n, min, max) {
   return Math.min(max, Math.max(min, x));
 }
 
+function formatTimeLabel(minutes, seconds) {
+  const mm = clamp(minutes, 0, 59);
+  const ss = clamp(seconds, 0, 59);
+  return `${mm}:${String(ss).padStart(2, "0")}`;
+}
+
 export default function WeddingPredictionSelection() {
   const navigate = useNavigate();
   const query = useQuery();
@@ -44,7 +50,6 @@ export default function WeddingPredictionSelection() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-
   const [predictions, setPredictions] = useState({});
 
   useEffect(() => {
@@ -75,7 +80,7 @@ export default function WeddingPredictionSelection() {
         setError("");
 
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/wedding/events/${codeFromUrl}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/wedding/events/${codeFromUrl}`,
         );
 
         const data = await response.json();
@@ -90,10 +95,6 @@ export default function WeddingPredictionSelection() {
 
         const mappedEvent = {
           joinCode: eventData.join_code,
-          coupleNames:
-            eventData.bride_name && eventData.groom_name
-              ? `${eventData.bride_name} & ${eventData.groom_name}`
-              : eventData.event_name,
           status: eventData.status,
           speakers: (eventData.speakers || []).map((s) => ({
             speakerId: s.speaker_id,
@@ -113,11 +114,11 @@ export default function WeddingPredictionSelection() {
                 nameFromUrl ||
                 ""
               ).trim(),
-            })
+            }),
           );
 
           navigate(
-            `/weddingresults?code=${encodeURIComponent(mappedEvent.joinCode)}`
+            `/weddingresults?code=${encodeURIComponent(mappedEvent.joinCode)}`,
           );
           return;
         }
@@ -198,7 +199,7 @@ export default function WeddingPredictionSelection() {
             playerName: trimmedName,
             predictions: rows,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -213,7 +214,7 @@ export default function WeddingPredictionSelection() {
           joinCode: event.joinCode,
           playerId,
           playerName: trimmedName,
-        })
+        }),
       );
 
       navigate(`/weddingresults?code=${encodeURIComponent(event.joinCode)}`);
@@ -228,15 +229,10 @@ export default function WeddingPredictionSelection() {
   if (loading) {
     return (
       <div className="screen ss-editorial wedding-predictions">
-        <div className="ss-card">
+        <div className="ss-card ss-card--wide">
           <div className="ss-header">
-            <div className="ss-ornament" aria-hidden="true">
-              <span className="ss-dot" />
-              <span className="ss-line" />
-              <span className="ss-dot" />
-            </div>
-            <h1 className="ss-title">Speechstakes</h1>
-            <p className="ss-subtitle">Loading event…</p>
+            {/* <h1 className="ss- title">SpeechStakes</h1> */}
+            <p className="ss-subtitle">Loading event...</p>
           </div>
         </div>
       </div>
@@ -246,9 +242,10 @@ export default function WeddingPredictionSelection() {
   if (!event) {
     return (
       <div className="screen ss-editorial wedding-predictions">
-        <div className="ss-card">
+        <div className="ss-card ss-card--wide">
           <div className="ss-header">
-            <h1 className="ss-title">Speechstakes</h1>
+            {/* <h1 className="ss-title">SpeechStakes</h1> */}
+
             <p className="ss-subtitle">Event unavailable</p>
           </div>
           {error ? <div className="ss-error">{error}</div> : null}
@@ -257,61 +254,54 @@ export default function WeddingPredictionSelection() {
     );
   }
 
-  const coupleParts = event.coupleNames.split("&").map((x) => x.trim());
-  const brideName = coupleParts[0] || event.coupleNames;
-  const groomName = coupleParts[1] || "";
-
   return (
     <div className="screen ss-editorial wedding-predictions">
-      <div className="ss-card ss-card--wide">
-        <div className="ss-header ss-wedding-header">
-          <div className="ss-ornament" aria-hidden="true">
-            <span className="ss-dot" />
-            <span className="ss-line" />
-            <span className="ss-dot" />
+      <div className="ss-card ss-card--wide ss-predictions-card">
+        <div className="ss-predictions-hero">
+          {/* <div className="ss-wedding-overline">SpeechStakes</div> */}
+          <div className="ss-predictions-hero__title">
+            Make your predictions
           </div>
 
-          <div className="ss-wedding-titleblock">
-            <div className="ss-wedding-overline">The Wedding of</div>
-
-            <div className="ss-wedding-names">
-              <span className="ss-wedding-name">{brideName}</span>
-              {groomName ? <span className="ss-wedding-amp">&amp;</span> : null}
-              {groomName ? (
-                <span className="ss-wedding-name">{groomName}</span>
-              ) : null}
-            </div>
-
-            <div className="ss-wedding-underline" aria-hidden="true" />
+          <div className="ss-meta-pills">
+            <span className="ss-meta-pill">Join code: {event.joinCode}</span>
+            <span className="ss-meta-pill">
+              {event.speakers.length}{" "}
+              {event.speakers.length === 1 ? "speech" : "speeches"}
+            </span>
           </div>
 
-          <p className="ss-subtitle ss-subtitle--tight">
-            Enter your predictions for each speech (mm:ss).
+          <p className="ss-predictions-hero__text">
+            Guess how long each speech will last. Pick a time in minutes and
+            seconds for every speaker, then submit your predictions once at the
+            end.
           </p>
         </div>
 
-        <div className="ss-list">
-          {event.speakers.map((s) => {
+        <div className="ss-list ss-list--predictions">
+          {event.speakers.map((s, idx) => {
             const p = predictions[s.speakerId] || { minutes: 0, seconds: 0 };
             const mm = clamp(p.minutes, 0, 59);
             const ss = clamp(p.seconds, 0, 59);
 
             return (
-              <div className="ss-row" key={s.speakerId}>
-                <div className="ss-row__left">
-                  <div className="ss-row__role">{s.role}</div>
-
-                  <div className="ss-row__person">
-                    <span className="ss-row__person-pill" aria-hidden="true" />
-                    <span className="ss-row__person-name">{s.personName}</span>
-                  </div>
+              <div className="ss-prediction-card" key={s.speakerId}>
+                <div className="ss-prediction-card__top">
+                  <span className="ss-row__badge">Speech {idx + 1}</span>
                 </div>
 
-                <div className="ss-time">
-                  <div className="ss-time__group">
+                <div className="ss-prediction-card__role">{s.role}</div>
+
+                <div className="ss-row__person ss-row__person--prediction">
+                  <span className="ss-row__person-pill" aria-hidden="true" />
+                  <span className="ss-row__person-name">{s.personName}</span>
+                </div>
+
+                <div className="ss-prediction-time">
+                  <div className="ss-prediction-time__group">
                     <label className="ss-time__label">Min</label>
                     <select
-                      className="ss-select"
+                      className="ss-select ss-select--prediction"
                       value={mm}
                       onChange={(e) =>
                         updatePrediction(s.speakerId, "minutes", e.target.value)
@@ -325,12 +315,12 @@ export default function WeddingPredictionSelection() {
                     </select>
                   </div>
 
-                  <div className="ss-time__colon">:</div>
+                  <div className="ss-prediction-time__colon">:</div>
 
-                  <div className="ss-time__group">
+                  <div className="ss-prediction-time__group">
                     <label className="ss-time__label">Sec</label>
                     <select
-                      className="ss-select"
+                      className="ss-select ss-select--prediction"
                       value={ss}
                       onChange={(e) =>
                         updatePrediction(s.speakerId, "seconds", e.target.value)
@@ -344,6 +334,10 @@ export default function WeddingPredictionSelection() {
                     </select>
                   </div>
                 </div>
+
+                <div className="ss-prediction-card__summary">
+                  Your guess: {formatTimeLabel(mm, ss)}
+                </div>
               </div>
             );
           })}
@@ -351,17 +345,17 @@ export default function WeddingPredictionSelection() {
 
         {error ? <div className="ss-error">{error}</div> : null}
 
-        <button
-          className="ss-btn ss-btn--primary ss-submit"
-          onClick={handleSubmit}
-          disabled={submitting}
-        >
-          {submitting ? "Submitting..." : "Submit predictions"}
-        </button>
+        <div className="ss-predictions-footer">
+          <button
+            className="ss-btn ss-btn--primary ss-btn--final"
+            onClick={handleSubmit}
+            disabled={submitting}
+          >
+            {submitting ? "Submitting..." : "Submit predictions"}
+          </button>
 
-        <div className="ss-footer ss-footer--muted">
-          <div className="ss-footnote">
-            Join code: <strong>{event.joinCode}</strong>
+          <div className="ss-footnote ss-footnote--center">
+            Submit once after you have filled in every speech.
           </div>
         </div>
       </div>
