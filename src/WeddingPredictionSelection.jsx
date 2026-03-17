@@ -41,8 +41,9 @@ export default function WeddingPredictionSelection() {
   const navigate = useNavigate();
   const query = useQuery();
 
-  const codeFromUrl = (query.get("code") || "").toUpperCase();
-  const nameFromUrl = query.get("name") || "";
+  const codeFromUrl = (query.get("code") || "").trim().toUpperCase();
+  const nameFromUrl = (query.get("name") || "").trim();
+  const overwriteFromUrl = query.get("overwrite") === "1";
 
   const [playerId, setPlayerId] = useState("");
   const [playerName, setPlayerName] = useState(nameFromUrl);
@@ -56,12 +57,16 @@ export default function WeddingPredictionSelection() {
     const id = getOrCreatePlayerId();
     setPlayerId(id);
 
-    const existingName = localStorage.getItem(LS_PLAYER_NAME_KEY);
-    const finalName = (existingName || nameFromUrl || "").trim();
+    const storedName = (localStorage.getItem(LS_PLAYER_NAME_KEY) || "").trim();
+
+    // For shared devices, always prefer the name passed in the URL.
+    // Only fall back to the stored name if there is no URL name.
+    const finalName = (nameFromUrl || storedName || "").trim();
+
+    setPlayerName(finalName);
 
     if (finalName) {
       localStorage.setItem(LS_PLAYER_NAME_KEY, finalName);
-      setPlayerName(finalName);
     }
   }, [nameFromUrl]);
 
@@ -83,10 +88,15 @@ export default function WeddingPredictionSelection() {
           `${import.meta.env.VITE_BACKEND_URL}/api/wedding/events/${codeFromUrl}`,
         );
 
-        const data = await response.json();
+        let data = null;
+        try {
+          data = await response.json();
+        } catch {
+          data = null;
+        }
 
         if (!response.ok) {
-          throw new Error(data.error || "Failed to load event.");
+          throw new Error(data?.error || "Failed to load event.");
         }
 
         if (cancelled) return;
@@ -110,8 +120,8 @@ export default function WeddingPredictionSelection() {
               joinCode: mappedEvent.joinCode,
               playerId: getOrCreatePlayerId(),
               playerName: (
-                localStorage.getItem(LS_PLAYER_NAME_KEY) ||
                 nameFromUrl ||
+                localStorage.getItem(LS_PLAYER_NAME_KEY) ||
                 ""
               ).trim(),
             }),
@@ -197,16 +207,30 @@ export default function WeddingPredictionSelection() {
             joinCode: event.joinCode,
             playerId,
             playerName: trimmedName,
+            overwrite: overwriteFromUrl,
             predictions: rows,
           }),
         },
       );
 
-      const data = await response.json();
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to submit predictions.");
+        if (response.status === 409 && data?.code === "NAME_ALREADY_EXISTS") {
+          throw new Error(
+            `A prediction already exists for "${trimmedName}". Please go back and choose overwrite, or use a different name.`,
+          );
+        }
+
+        throw new Error(data?.error || "Failed to submit predictions.");
       }
+
+      localStorage.setItem(LS_PLAYER_NAME_KEY, trimmedName);
 
       localStorage.setItem(
         LS_WEDDING_RESULTS_KEY,
@@ -231,7 +255,6 @@ export default function WeddingPredictionSelection() {
       <div className="screen ss-editorial wedding-predictions">
         <div className="ss-card ss-card--wide">
           <div className="ss-header">
-            {/* <h1 className="ss- title">SpeechStakes</h1> */}
             <p className="ss-subtitle">Loading event...</p>
           </div>
         </div>
@@ -244,8 +267,6 @@ export default function WeddingPredictionSelection() {
       <div className="screen ss-editorial wedding-predictions">
         <div className="ss-card ss-card--wide">
           <div className="ss-header">
-            {/* <h1 className="ss-title">SpeechStakes</h1> */}
-
             <p className="ss-subtitle">Event unavailable</p>
           </div>
           {error ? <div className="ss-error">{error}</div> : null}
@@ -258,7 +279,6 @@ export default function WeddingPredictionSelection() {
     <div className="screen ss-editorial wedding-predictions">
       <div className="ss-card ss-card--wide ss-predictions-card">
         <div className="ss-predictions-hero">
-          {/* <div className="ss-wedding-overline">SpeechStakes</div> */}
           <div className="ss-predictions-hero__title">
             Make your predictions
           </div>

@@ -4,7 +4,7 @@ import { Icon } from "@iconify/react";
 import confetti from "canvas-confetti";
 import "./WeddingApp.css";
 
-const LS_WEDDING_RESULTS_KEY = "wedding_last_results_v1";
+const SS_WEDDING_RESULTS_KEY = "wedding_last_results_v1";
 
 function useQuery() {
   const { search } = useLocation();
@@ -46,12 +46,40 @@ function getMedalIcon(rank) {
   return null;
 }
 
+function renderPredictionList(rows, emptyText = "No predictions") {
+  if (!rows || rows.length === 0) {
+    return <div className="ss-summary-empty">{emptyText}</div>;
+  }
+
+  return rows.map((row, index) => (
+    <div
+      className="ss-clean-stat-person"
+      key={[
+        row.playerId || "unknown-player",
+        row.playerName || "unknown-name",
+        row.predictedSeconds ?? "unknown-prediction",
+        index,
+      ].join("__")}
+    >
+      <div className="ss-clean-stat-person__name">{row.playerName}</div>
+      <div className="ss-clean-stat-person__time">
+        Predicted {formatSeconds(row.predictedSeconds)}
+      </div>
+    </div>
+  ));
+}
+
 export default function WeddingResults() {
   const query = useQuery();
 
-  const stored = safeJsonParse(localStorage.getItem(LS_WEDDING_RESULTS_KEY));
   const codeFromUrl = (query.get("code") || "").trim().toUpperCase();
-  const joinCode = codeFromUrl || stored?.joinCode || "";
+
+  const storedSession =
+    typeof window !== "undefined"
+      ? safeJsonParse(sessionStorage.getItem(SS_WEDDING_RESULTS_KEY))
+      : null;
+
+  const joinCode = codeFromUrl || storedSession?.joinCode || "";
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -61,19 +89,25 @@ export default function WeddingResults() {
     overall: [],
     bySpeaker: {},
   });
+  const [speakerSummaries, setSpeakerSummaries] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState("overall");
   const [hasShownConfetti, setHasShownConfetti] = useState(false);
 
   useEffect(() => {
     if (!joinCode) return;
 
-    localStorage.setItem(
-      LS_WEDDING_RESULTS_KEY,
+    sessionStorage.setItem(
+      SS_WEDDING_RESULTS_KEY,
       JSON.stringify({
         joinCode,
         updatedAt: Date.now(),
       }),
     );
+  }, [joinCode]);
+
+  useEffect(() => {
+    setHasShownConfetti(false);
+    setSelectedFilter("overall");
   }, [joinCode]);
 
   useEffect(() => {
@@ -89,7 +123,12 @@ export default function WeddingResults() {
 
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/wedding/results/${joinCode}`,
+          `${
+            import.meta.env.VITE_BACKEND_URL
+          }/api/wedding/results/${encodeURIComponent(joinCode)}`,
+          {
+            cache: "no-store",
+          },
         );
 
         const data = await response.json();
@@ -100,7 +139,7 @@ export default function WeddingResults() {
 
         if (cancelled) return;
 
-        setEventData(data.event);
+        setEventData(data.event || null);
         setLeaderboardReady(Boolean(data.leaderboardReady));
         setLeaderboards(
           data.leaderboards || {
@@ -108,11 +147,14 @@ export default function WeddingResults() {
             bySpeaker: {},
           },
         );
+        setSpeakerSummaries(data.speakerSummaries || []);
         setError("");
         setLoading(false);
 
         if (!data.leaderboardReady) {
-          timeoutId = setTimeout(loadResults, 5000);
+          timeoutId = window.setTimeout(() => {
+            loadResults();
+          }, 5000);
         }
       } catch (err) {
         if (cancelled) return;
@@ -122,70 +164,82 @@ export default function WeddingResults() {
       }
     }
 
+    setLoading(true);
+    setError("");
+    setEventData(null);
+    setLeaderboardReady(false);
+    setLeaderboards({
+      overall: [],
+      bySpeaker: {},
+    });
+    setSpeakerSummaries([]);
+
     loadResults();
 
     return () => {
       cancelled = true;
-      if (timeoutId) clearTimeout(timeoutId);
+      if (timeoutId) window.clearTimeout(timeoutId);
     };
   }, [joinCode]);
 
   useEffect(() => {
-    const shouldCelebrate =
-      leaderboardReady &&
-      selectedFilter === "overall" &&
-      (leaderboards.overall || []).length > 0 &&
-      !hasShownConfetti;
+    if (!leaderboardReady) return;
+    if (selectedFilter !== "overall") return;
+    if ((leaderboards.overall || []).length === 0) return;
+    if (hasShownConfetti) return;
 
-    if (!shouldCelebrate) return;
+    const timeout = window.setTimeout(() => {
+      const canvas = document.getElementById("ss-confetti-canvas");
+      if (!canvas) return;
 
-    setHasShownConfetti(true);
+      setHasShownConfetti(true);
 
-    const canvas = document.getElementById("ss-confetti-canvas");
-    if (!canvas) return;
+      const myConfetti = confetti.create(canvas, { resize: true });
+      const duration = 3000;
+      const animationEnd = Date.now() + duration;
 
-    const myConfetti = confetti.create(canvas, { resize: true });
-    const duration = 2500;
-    const animationEnd = Date.now() + duration;
+      const interval = window.setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
 
-    const interval = setInterval(() => {
-      const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) {
+          window.clearInterval(interval);
+          return;
+        }
 
-      if (timeLeft <= 0) {
-        clearInterval(interval);
-        return;
-      }
+        myConfetti({
+          startVelocity: 30,
+          spread: 360,
+          ticks: 60,
+          particleCount: 80,
+          origin: {
+            x: Math.random(),
+            y: Math.max(0, Math.random() - 0.2),
+          },
+        });
+      }, 250);
 
-      myConfetti({
-        startVelocity: 28,
-        spread: 360,
-        ticks: 60,
-        particleCount: 70,
-        origin: {
-          x: Math.random(),
-          y: Math.random() - 0.15,
-        },
-      });
-    }, 250);
+      window.setTimeout(() => {
+        window.clearInterval(interval);
+      }, duration + 500);
+    }, 150);
 
-    return () => clearInterval(interval);
-  }, [leaderboardReady, selectedFilter, leaderboards, hasShownConfetti]);
+    return () => window.clearTimeout(timeout);
+  }, [
+    leaderboardReady,
+    selectedFilter,
+    leaderboards.overall,
+    hasShownConfetti,
+  ]);
 
   const currentRows =
     selectedFilter === "overall"
       ? leaderboards.overall || []
       : leaderboards.bySpeaker?.[selectedFilter] || [];
 
-  // const currentSpeaker =
-  //   selectedFilter === "overall"
-  //     ? null
-  //     : eventData?.speakers?.find((s) => s.speakerId === selectedFilter) ||
-  //       null;
-
   const metricText =
     selectedFilter === "overall"
-      ? "Lower total off-by wins."
-      : "Lower off-by wins.";
+      ? "Lowest total time difference wins."
+      : "Lowest time difference wins.";
 
   const topThree = currentRows.slice(0, 3);
   const remainingRows = currentRows.slice(3);
@@ -194,6 +248,16 @@ export default function WeddingResults() {
     return selectedFilter === "overall"
       ? formatSeconds(row.totalDifference)
       : formatSeconds(row.difference);
+  }
+
+  function getRowKey(row, index) {
+    return [
+      selectedFilter,
+      row.playerId || "unknown-player",
+      row.rank || "no-rank",
+      row.playerName || "unknown-name",
+      index,
+    ].join("__");
   }
 
   if (loading) {
@@ -254,13 +318,20 @@ export default function WeddingResults() {
             <select
               className="ss-results-title-select__input"
               value={selectedFilter}
-              onChange={(e) => setSelectedFilter(e.target.value)}
+              onChange={(e) => {
+                const nextValue = e.target.value;
+                setSelectedFilter(nextValue);
+
+                if (nextValue !== "overall") {
+                  setHasShownConfetti(true);
+                }
+              }}
               aria-label="Select leaderboard"
             >
-              <option value="overall">Overall leaderboard</option>
+              <option value="overall">Overall</option>
               {(eventData.speakers || []).map((speaker) => (
                 <option key={speaker.speakerId} value={speaker.speakerId}>
-                  {speaker.speakerRole} results
+                  {speaker.speakerRole}
                 </option>
               ))}
             </select>
@@ -277,8 +348,11 @@ export default function WeddingResults() {
               <div className="ss-results-podium">
                 {topThree.map((row, idx) => (
                   <div
-                    className={`ss-podium-card ss-podium-card--${idx + 1}`}
-                    key={row.playerId}
+                    className={`ss-podium-card ss-podium-card--${Math.min(
+                      row.rank,
+                      3,
+                    )}`}
+                    key={getRowKey(row, idx)}
                   >
                     <div className="ss-podium-card__rank">
                       {getMedalIcon(row.rank) || `#${row.rank}`}
@@ -287,11 +361,6 @@ export default function WeddingResults() {
                     <div className="ss-podium-card__main">
                       <div className="ss-podium-card__name">
                         {row.playerName}
-                      </div>
-                      <div className="ss-podium-card__meta">
-                        {selectedFilter === "overall"
-                          ? "Total off-by"
-                          : "Off by"}
                       </div>
                     </div>
 
@@ -304,16 +373,21 @@ export default function WeddingResults() {
             ) : null}
 
             {remainingRows.length > 0 ? (
-              <div className="ss-results-table">
+              <div className="ss-results-table ss-results-table--capped">
                 <div className="ss-results-table__head">
                   <div>Rank</div>
                   <div>Player</div>
                   <div>Off by</div>
                 </div>
 
-                {remainingRows.map((row) => (
-                  <div className="ss-results-table__row" key={row.playerId}>
-                    <div className="ss-results-table__rank">#{row.rank}</div>
+                {remainingRows.map((row, index) => (
+                  <div
+                    className="ss-results-table__row"
+                    key={getRowKey(row, index + 3)}
+                  >
+                    <div className="ss-results-table__rank">
+                      {getMedalIcon(row.rank) || `#${row.rank}`}
+                    </div>
                     <div className="ss-results-table__player">
                       {row.playerName}
                     </div>
@@ -329,6 +403,76 @@ export default function WeddingResults() {
 
         {error ? <div className="ss-error">{error}</div> : null}
       </div>
+
+      {speakerSummaries.length > 0 ? (
+        <div className="ss-speaker-summary-list">
+          {speakerSummaries.map((speaker) => {
+            const farthestAway =
+              speaker.mostUnderestimated?.length > 0
+                ? speaker.mostUnderestimated
+                : speaker.mostOverestimated || [];
+
+            return (
+              <div
+                className="ss-card ss-card--wide ss-speaker-clean-card"
+                key={speaker.speakerId}
+              >
+                <div className="ss-speaker-clean-card__header">
+                  <div className="ss-speaker-clean-card__title-wrap">
+                    <div className="ss-speaker-clean-card__role">
+                      {speaker.speakerRole}
+                    </div>
+                    <div className="ss-speaker-clean-card__name">
+                      {speaker.speakerName}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="ss-speaker-clean-card__stats">
+                  <div className="ss-speaker-clean-stat">
+                    <div className="ss-speaker-clean-stat__label">
+                      Actual time
+                    </div>
+                    <div className="ss-speaker-clean-stat__big">
+                      {formatSeconds(speaker.actualSeconds)}
+                    </div>
+                  </div>
+
+                  <div className="ss-speaker-clean-stat">
+                    <div className="ss-speaker-clean-stat__label">
+                      Average prediction time
+                    </div>
+                    <div className="ss-speaker-clean-stat__big">
+                      {formatSeconds(speaker.averagePredictionSeconds)}
+                    </div>
+                  </div>
+
+                  <div className="ss-speaker-clean-stat">
+                    <div className="ss-speaker-clean-stat__label">
+                      Closest prediction
+                    </div>
+                    <div className="ss-speaker-clean-stat__content">
+                      {renderPredictionList(
+                        speaker.winners,
+                        "No closest prediction.",
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="ss-speaker-clean-stat">
+                    <div className="ss-speaker-clean-stat__label">
+                      Worst prediction
+                    </div>
+                    <div className="ss-speaker-clean-stat__content">
+                      {renderPredictionList(farthestAway, "No standout miss.")}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
 
       <canvas
         id="ss-confetti-canvas"
