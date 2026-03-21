@@ -137,21 +137,21 @@ export default function WeddingHome() {
 
           <div className="ss-join-block">
             <div className="ss-join-block-header">
-              <div className="ss-join-card-badge">
+              {/* <div className="ss-join-card-badge">
                 <span className="ss-badge-dot" />
                 Live event
-              </div>
-              <h2 className="ss-join-card-title">Join with your event code</h2>
+              </div> */}
+              <h2 className="ss-join-card-title">Already at a wedding? </h2>
               <p className="ss-join-card-subtitle">
-                Already at a wedding? Enter your code and name to play.
+                Enter your code and name to play.
               </p>
             </div>
 
             <form onSubmit={handleJoin} className="ss-form">
               <div className="ss-form-field">
-                <label className="ss-form-label" htmlFor="joinCode">
+                {/* <label className="ss-form-label" htmlFor="joinCode">
                   Event code
-                </label>
+                </label> */}
                 <input
                   id="joinCode"
                   className="ss-form-input ss-code"
@@ -160,7 +160,7 @@ export default function WeddingHome() {
                   autoCapitalize="characters"
                   autoCorrect="off"
                   spellCheck={false}
-                  placeholder="e.g. SMITH24"
+                  placeholder="Enter event code"
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value)}
                   onBlur={() => setJoinCode(cleanedJoinCode)}
@@ -169,9 +169,9 @@ export default function WeddingHome() {
               </div>
 
               <div className="ss-form-field">
-                <label className="ss-form-label" htmlFor="playerName">
+                {/* <label className="ss-form-label" htmlFor="playerName">
                   Your name
-                </label>
+                </label> */}
                 <input
                   id="playerName"
                   className="ss-form-input"
