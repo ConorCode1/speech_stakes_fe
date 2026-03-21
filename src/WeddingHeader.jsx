@@ -144,6 +144,19 @@ export default function WeddingHeader() {
                   Home
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/contact"
+                  className="wedding-nav-link"
+                  onClick={closeMenu}
+                >
+                  <Icon
+                    icon="mdi:message-text-outline"
+                    className="wedding-sidebar-item-icon"
+                  />
+                  Contact Us
+                </Link>
+              </li>
 
               <li>
                 <Link

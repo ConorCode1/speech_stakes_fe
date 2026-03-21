@@ -1,6 +1,4 @@
-//weddingcreateevent.jsx
-
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./WeddingApp.css";
 
@@ -27,6 +25,9 @@ const ROLE_OPTIONS = [
   "Other",
 ];
 
+const DEFAULT_BRIDE_NAME = "Bride";
+const DEFAULT_GROOM_NAME = "Groom";
+
 function safeJsonParse(s) {
   try {
     return JSON.parse(s);
@@ -47,10 +48,7 @@ function makeEmptySpeaker() {
 export default function WeddingCreateEvent() {
   const navigate = useNavigate();
 
-  const [brideName, setBrideName] = useState("");
-  const [groomName, setGroomName] = useState("");
   const [speakers, setSpeakers] = useState([makeEmptySpeaker()]);
-
   const [created, setCreated] = useState(false);
   const [joinCode, setJoinCode] = useState("");
   const [error, setError] = useState("");
@@ -63,24 +61,18 @@ export default function WeddingCreateEvent() {
     const draft = safeJsonParse(raw);
     if (!draft) return;
 
-    setBrideName(draft.brideName || "");
-    setGroomName(draft.groomName || "");
     setSpeakers(
       Array.isArray(draft.speakers) && draft.speakers.length
         ? draft.speakers
-        : [makeEmptySpeaker()]
+        : [makeEmptySpeaker()],
     );
 
-    // Do not trust previously "created" local state as the source of truth.
-    // The database is now the real source of truth.
     setCreated(false);
     setJoinCode("");
   }, []);
 
   useEffect(() => {
     const payload = {
-      brideName,
-      groomName,
       speakers,
       created,
       joinCode,
@@ -88,22 +80,13 @@ export default function WeddingCreateEvent() {
     };
 
     localStorage.setItem(LS_DRAFT_KEY, JSON.stringify(payload));
-  }, [brideName, groomName, speakers, created, joinCode]);
-
-  const coupleLabel = useMemo(() => {
-    const b = (brideName || "").trim();
-    const g = (groomName || "").trim();
-
-    if (!b && !g) return "The Wedding";
-    if (b && g) return `The Wedding of ${b} & ${g}`;
-    return `The Wedding of ${b || g}`;
-  }, [brideName, groomName]);
+  }, [speakers, created, joinCode]);
 
   function updateSpeaker(id, patch) {
     setSpeakers((prev) =>
       prev.map((speaker) =>
-        speaker.id === id ? { ...speaker, ...patch } : speaker
-      )
+        speaker.id === id ? { ...speaker, ...patch } : speaker,
+      ),
     );
   }
 
@@ -113,18 +96,11 @@ export default function WeddingCreateEvent() {
 
   function removeSpeaker(id) {
     setSpeakers((prev) =>
-      prev.length <= 1 ? prev : prev.filter((speaker) => speaker.id !== id)
+      prev.length <= 1 ? prev : prev.filter((speaker) => speaker.id !== id),
     );
   }
 
   function validate() {
-    const b = brideName.trim();
-    const g = groomName.trim();
-
-    if (!b || !g) {
-      return "Please enter the first name of the bride and groom.";
-    }
-
     const cleaned = speakers.map((speaker) => ({
       ...speaker,
       personName: (speaker.personName || "").trim(),
@@ -160,7 +136,7 @@ export default function WeddingCreateEvent() {
 
     try {
       const hostUser = JSON.parse(
-        localStorage.getItem(LS_WEDDING_HOST_USER_KEY) || "null"
+        localStorage.getItem(LS_WEDDING_HOST_USER_KEY) || "null",
       );
 
       if (!hostUser?.userId) {
@@ -171,8 +147,8 @@ export default function WeddingCreateEvent() {
 
       const payload = {
         hostUserId: hostUser.userId,
-        brideName: brideName.trim(),
-        groomName: groomName.trim(),
+        brideName: DEFAULT_BRIDE_NAME,
+        groomName: DEFAULT_GROOM_NAME,
         eventDate: null,
         speakers: speakers.map((speaker, idx) => ({
           personName: speaker.personName.trim(),
@@ -211,19 +187,17 @@ export default function WeddingCreateEvent() {
         JSON.stringify({
           eventId: data.event.event_id,
           joinCode: data.event.join_code,
-        })
+        }),
       );
 
       localStorage.setItem(
         LS_DRAFT_KEY,
         JSON.stringify({
-          brideName,
-          groomName,
           speakers,
           created: true,
           joinCode: data.event.join_code,
           updatedAt: Date.now(),
-        })
+        }),
       );
 
       setJoinCode(data.event.join_code);
@@ -240,19 +214,17 @@ export default function WeddingCreateEvent() {
 
   function handleGoToPredictions() {
     if (!joinCode) return;
-    navigate(`/wedding/join?code=${encodeURIComponent(joinCode)}`);
+    navigate(`/weddingjoin?code=${encodeURIComponent(joinCode)}`);
   }
 
-  function handleResetDraft() {
-    localStorage.removeItem(LS_DRAFT_KEY);
-    setBrideName("");
-    setGroomName("");
-    setSpeakers([makeEmptySpeaker()]);
-    setCreated(false);
-    setJoinCode("");
-    setError("");
-    setIsCreating(false);
-  }
+  // function handleResetDraft() {
+  //   localStorage.removeItem(LS_DRAFT_KEY);
+  //   setSpeakers([makeEmptySpeaker()]);
+  //   setCreated(false);
+  //   setJoinCode("");
+  //   setError("");
+  //   setIsCreating(false);
+  // }
 
   return (
     <div className="screen ss-editorial wedding-create">
@@ -267,46 +239,17 @@ export default function WeddingCreateEvent() {
           <div className="ss-wedding-titleblock">
             <div className="ss-wedding-overline">Create Event</div>
             <div className="ss-wedding-names">
-              <span className="ss-wedding-name">{coupleLabel}</span>
+              <span className="ss-wedding-name">Set up your speakers</span>
             </div>
             <div className="ss-wedding-underline" aria-hidden="true" />
           </div>
 
           <p className="ss-subtitle ss-subtitle--tight">
-            Add the couple and the list of speakers, then create your event
-            code.
+            Add the list of speakers, then create your event code.
           </p>
         </div>
 
         <div className="ss-form">
-          <div className="ss-grid-2">
-            <div className="ss-field">
-              <label className="ss-label" htmlFor="brideName">
-                Bride first name
-              </label>
-              <input
-                id="brideName"
-                className="ss-input"
-                value={brideName}
-                onChange={(e) => setBrideName(e.target.value)}
-                placeholder="e.g. Emma"
-              />
-            </div>
-
-            <div className="ss-field">
-              <label className="ss-label" htmlFor="groomName">
-                Groom first name
-              </label>
-              <input
-                id="groomName"
-                className="ss-input"
-                value={groomName}
-                onChange={(e) => setGroomName(e.target.value)}
-                placeholder="e.g. Daniel"
-              />
-            </div>
-          </div>
-
           <div className="ss-section">
             <div className="ss-section__title">Speakers</div>
             <div className="ss-section__hint">
@@ -374,7 +317,7 @@ export default function WeddingCreateEvent() {
                     </div>
                   </div>
 
-                  {showCustom && (
+                  {showCustom ? (
                     <div className="ss-field">
                       <label className="ss-label">Custom role</label>
                       <input
@@ -388,7 +331,7 @@ export default function WeddingCreateEvent() {
                         placeholder="e.g. Friend of the couple"
                       />
                     </div>
-                  )}
+                  ) : null}
                 </div>
               );
             })}
@@ -415,14 +358,14 @@ export default function WeddingCreateEvent() {
               {isCreating ? "Creating..." : "Create event"}
             </button>
 
-            <button
+            {/* <button
               type="button"
               className="ss-btn ss-btn--ghost"
               onClick={handleResetDraft}
               disabled={isCreating}
             >
               Reset
-            </button>
+            </button> */}
           </div>
 
           {created && joinCode ? (
@@ -430,8 +373,7 @@ export default function WeddingCreateEvent() {
               <div className="ss-created__label">Event code</div>
               <div className="ss-created__code">{joinCode}</div>
               <div className="ss-created__hint">
-                Share this code with guests. If you need to change speakers,
-                create a new event for now.
+                Share this code with guests.
               </div>
 
               <button
