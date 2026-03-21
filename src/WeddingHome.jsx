@@ -115,13 +115,12 @@ export default function WeddingHome() {
       <section className="ss-hero">
         <div className="ss-hero-inner">
           <h1 className="ss-hero-title">
-            Turn every speech into <em>a moment</em> to remember.
+            The wedding <em>speech game</em> your guests will love.
           </h1>
 
           <p className="ss-hero-subtitle">
-            Guests predict how long each speech will run. Closest guess wins. No
-            app, no fuss — just a fun live game that fits naturally around the
-            speeches.
+            Guests predict how long each speech will last. Closest guess wins.
+            Make your wedding feel more fun, connected, and alive.
           </p>
 
           <div className="ss-hero-actions-stack">
@@ -190,12 +189,12 @@ export default function WeddingHome() {
                 className="ss-btn ss-btn-gold ss-btn-full ss-btn-form"
                 disabled={loading}
               >
-                {loading ? "Checking..." : "Join event"}
+                {loading ? "Checking..." : "Join"}
               </button>
             </form>
           </div>
 
-          <div className="ss-hero-pills">
+          {/* <div className="ss-hero-pills">
             <div className="ss-hero-pill">
               <span className="ss-pill-dot" />
               <span>No download required for guests</span>
@@ -208,25 +207,25 @@ export default function WeddingHome() {
               <span className="ss-pill-dot" />
               <span>Results reveal live during the reception</span>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
 
       <section className="ss-proof-strip">
         <div className="ss-proof-item">
-          <span className="ss-proof-number">Fast</span>
+          <span className="ss-proof-number">Quick to play</span>
           <span className="ss-proof-label">
-            Guests join in under 30 seconds
+            Takes seconds to join and make a guess
           </span>
         </div>
         <div className="ss-proof-item">
-          <span className="ss-proof-number">Simple</span>
-          <span className="ss-proof-label">Zero downloads or sign-ups</span>
+          <span className="ss-proof-number">Gets everyone involved</span>
+          <span className="ss-proof-label">Creates a fun shared moment</span>
         </div>
         <div className="ss-proof-item">
-          <span className="ss-proof-number">Memorable</span>
+          <span className="ss-proof-number">Unforgettable</span>
           <span className="ss-proof-label">
-            A moment guests talk about after
+            Turns speeches into a highlight
           </span>
         </div>
       </section>
