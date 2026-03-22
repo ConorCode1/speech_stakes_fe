@@ -6,7 +6,7 @@
   box-sizing: border-box;
 }
 
-:root {
+/* :root {
   --page: #f7fbf9;
   --surface: #ffffff;
   --surface-soft: #f2f7f5;
@@ -30,7 +30,7 @@
 
   --error-bg: #fef2f2;
   --error-text: #b91c1c;
-}
+} */
 :root {
   --page: #f6fbfb;
   --surface: #ffffff;
