@@ -134,12 +134,13 @@ export default function WeddingHome() {
       <section className="ss-hero" id="top">
         <div className="ss-hero-inner">
           <h1 className="ss-hero-title">
-            The wedding <em>speech game</em> your guests will love.
+            The wedding speech game your guests will <em>love</em>.
+            {/* The wedding speech game your guests will <em>love</em>. */}
           </h1>
 
           <p className="ss-hero-subtitle">
-            Guests predict how long each speech will last. Closest guess wins.
-            Make your wedding feel more fun, connected, and alive.
+            Guests predict how long each speech will last. The closest guess
+            wins.
           </p>
 
           <div className="ss-hero-actions-stack">
@@ -216,15 +217,16 @@ export default function WeddingHome() {
 
       <section className="ss-proof-strip">
         <div className="ss-proof-item">
+          <span className="ss-proof-number">Gets everyone involved</span>
+          <span className="ss-proof-label">Creates a fun shared moment</span>
+        </div>
+        <div className="ss-proof-item">
           <span className="ss-proof-number">Quick to play</span>
           <span className="ss-proof-label">
             Takes seconds to join and make a guess
           </span>
         </div>
-        <div className="ss-proof-item">
-          <span className="ss-proof-number">Gets everyone involved</span>
-          <span className="ss-proof-label">Creates a fun shared moment</span>
-        </div>
+
         <div className="ss-proof-item">
           <span className="ss-proof-number">Unforgettable</span>
           <span className="ss-proof-label">
@@ -289,13 +291,13 @@ export default function WeddingHome() {
         <div className="ss-section-inner ss-section-inner-narrow">
           <div className="ss-section-kicker">Why couples love it</div>
           <h2 className="ss-section-title">
-            A simple way to make the speeches more fun
+            A simple way to add more fun to your day
           </h2>
           <p className="ss-section-text ss-section-text-large">
-            Speech Stakes adds a playful interactive layer to one of the biggest
-            parts of your day. It is quick to set up, easy for guests to join,
-            and creates a fun shared moment without adding hassle or taking away
-            from the speeches themselves.
+            Speech Stakes adds a fun, interactive layer to one of the biggest
+            parts of your wedding day. It is easy to set up, simple for guests
+            to join, and creates a shared moment that sparks conversation and
+            energises the room without taking away from the speeches themselves.
           </p>
         </div>
       </section>
@@ -304,15 +306,15 @@ export default function WeddingHome() {
         <div className="ss-section-inner">
           <div className="ss-section-kicker">Perfect for</div>
           <h2 className="ss-section-title">
-            Weddings that want something interactive but tasteful
+            Weddings that want a fun, modern guest experience
           </h2>
 
           <div className="ss-usecases">
             <div className="ss-usecase-card">
               <h3 className="ss-usecase-title">Couples</h3>
               <p className="ss-usecase-text">
-                Add a modern interactive touch to your reception without adding
-                hassle or taking attention away from what matters.
+                Add something interactive to your day that feels fresh, easy,
+                and genuinely enjoyable for guests.
               </p>
             </div>
 
@@ -321,16 +323,16 @@ export default function WeddingHome() {
                 Best men &amp; maids of honour
               </h3>
               <p className="ss-usecase-text">
-                A brilliant surprise extra to set up yourself — it makes the
-                speeches more fun for every guest in the room.
+                Set up a fun extra for the speeches that surprises the room and
+                gives guests something to talk about.
               </p>
             </div>
 
             <div className="ss-usecase-card">
               <h3 className="ss-usecase-title">Planners &amp; venues</h3>
               <p className="ss-usecase-text">
-                Offer clients a fresh, polished guest experience that feels
-                genuinely considered.
+                Offer couples a polished interactive touch that adds energy to
+                the day without adding complexity.
               </p>
             </div>
           </div>
@@ -339,27 +341,34 @@ export default function WeddingHome() {
 
       <section className="ss-final-cta">
         <div className="ss-final-cta-inner">
-          <div className="ss-section-kicker ss-section-kicker-light">
-            Ready to host?
-          </div>
           <h2 className="ss-final-cta-title">
-            Make your wedding speeches more memorable
+            Create a moment your guests will remember
           </h2>
+
           <p className="ss-final-cta-text">
-            Set up your event, share the code, and turn speech timings into a
-            live moment your guests will actually talk about.
+            Set up your event in minutes, and create a fun live experience that
+            brings the whole room together.
           </p>
-          <button
-            type="button"
-            className="ss-btn ss-btn-white ss-btn-lg"
-            onClick={handleCreate}
-            disabled={loading}
-          >
-            Host your event
-          </button>
+
+          <div className="ss-final-cta-actions">
+            <div className="ss-final-cta-price">
+              <span className="ss-final-cta-price-label">
+                Everything you need for one event
+              </span>
+              <span className="ss-final-cta-price-value">€24.99</span>
+            </div>
+
+            <button
+              type="button"
+              className="ss-btn ss-btn-white ss-btn-lg ss-final-cta-button"
+              onClick={handleCreate}
+              disabled={loading}
+            >
+              Get started
+            </button>
+          </div>
         </div>
       </section>
-
       <footer className="ss-site-footer">
         <div className="ss-site-footer-inner">
           <div className="ss-site-footer-links">
