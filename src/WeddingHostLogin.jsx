@@ -19,19 +19,6 @@ function hasActiveWeddingPass(user) {
   return status !== "free" && status !== "";
 }
 
-// function formatExpiryDate(dateString) {
-//   if (!dateString) return null;
-
-//   const d = new Date(dateString);
-//   if (Number.isNaN(d.getTime())) return null;
-
-//   return d.toLocaleDateString("en-IE", {
-//     day: "numeric",
-//     month: "long",
-//     year: "numeric",
-//   });
-// }
-
 export default function WeddingHostLogin() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,11 +39,6 @@ export default function WeddingHostLogin() {
   const isPaymentSuccessPage = location.pathname === "/wedding-payment-success";
   const isPaymentCancelledPage =
     location.pathname === "/wedding-payment-cancelled";
-
-  // const expiryLabel = useMemo(
-  //   () => formatExpiryDate(hostUser?.membershipExpiresAt),
-  //   [hostUser],
-  // );
 
   const routeHostUser = useCallback(
     async (userId) => {
@@ -323,16 +305,6 @@ export default function WeddingHostLogin() {
     }
   }
 
-  // function handleLogout() {
-  //   localStorage.removeItem(LS_WEDDING_HOST_USER_KEY);
-  //   setHostUser(null);
-  //   setShowPurchaseStep(false);
-  //   setPurchaseMessage("");
-  //   setError("");
-  //   setEmail("");
-  //   navigate("/weddinghostlogin", { replace: true });
-  // }
-
   if (checkingExistingSession) {
     return (
       <div className="home-container">
@@ -356,7 +328,7 @@ export default function WeddingHostLogin() {
     return (
       <div className="home-container">
         <div className="screen wedding-home ss-editorial">
-          <div className="ss-card">
+          <div className="ss-card ss-card--purchase">
             {isSuccessState ? (
               <>
                 <div className="ss-header ss-header--success">
@@ -371,8 +343,8 @@ export default function WeddingHostLogin() {
 
                 <div className="ss-form">
                   <div className="ss-success-message">
-                    Payment successful. Your pass gives you 30 days of access to
-                    create and manage your event.
+                    Payment successful. You can now create and manage your
+                    event.
                   </div>
 
                   <div className="ss-next-steps">
@@ -389,32 +361,65 @@ export default function WeddingHostLogin() {
                     className="ss-btn ss-btn--primary"
                     onClick={handleContinueToHostArea}
                   >
-                    Continue to Host Area
+                    Create My Event
                   </button>
                 </div>
               </>
             ) : (
               <>
-                <div className="ss-header">
+                <div className="ss-header ss-header--success">
+                  <div className="ss-success-icon-wrap">
+                    <Icon
+                      icon="mdi:check-circle-outline"
+                      className="ss-success-icon"
+                    />
+                  </div>
+
+                  {!isCancelledState ? (
+                    <div className="ss-success-kicker">
+                      Account created successfully
+                    </div>
+                  ) : null}
+
                   <h1 className="ss-title">
                     {isCancelledState
                       ? "Complete your purchase"
-                      : "Get Your Event Pass"}
+                      : "Your account is ready"}
                   </h1>
-                  <p className="ss-subtitle">
-                    You’re signed in as {hostUser?.email || "your account"}.
+
+                  <p className="ss-subtitle ss-subtitle--wide">
+                    {isCancelledState
+                      ? "Finish checkout to unlock your Event Pass."
+                      : "You’re just one step away from setting up your event."}
                   </p>
                 </div>
 
                 <div className="ss-form">
-                  <div className="ss-purchase-copy">
-                    Your pass gives you 30 days of access to create and manage
-                    your event.
+                  <div className="ss-purchase-account">
+                    <div className="ss-purchase-account__label">
+                      Signed in as
+                    </div>
+                    <div className="ss-purchase-account__email">
+                      {hostUser?.email || "your account"}
+                    </div>
+                  </div>
+
+                  <div className="ss-purchase-price-card">
+                    <div className="ss-purchase-price-card__label">
+                      One-time payment
+                    </div>
+                    <div className="ss-purchase-price-card__amount">€24.99</div>
+                    <div className="ss-purchase-price-card__text">
+                      One event per purchase. Unlock your Event Pass and start
+                      creating your event.
+                    </div>
                   </div>
 
                   {purchaseMessage ? (
                     <div
-                      className={isCancelledState ? "ss-warning" : "ss-success"}
+                      className={
+                        isCancelledState ? "ss-warning" : "ss-success-message"
+                      }
                     >
                       {purchaseMessage}
                     </div>
@@ -425,13 +430,24 @@ export default function WeddingHostLogin() {
                   {!hasActiveWeddingPass(hostUser) ? (
                     <button
                       type="button"
-                      className="ss-btn ss-btn--primary"
+                      className="ss-btn ss-btn--primary ss-btn--checkout"
                       onClick={handleStartCheckout}
                       disabled={startingCheckout}
                     >
-                      {startingCheckout
-                        ? "Redirecting to checkout..."
-                        : "Buy Event Pass"}
+                      {startingCheckout ? (
+                        "Redirecting to checkout..."
+                      ) : (
+                        <>
+                          <Icon
+                            icon="mdi:lock-outline"
+                            style={{
+                              marginRight: "0.45rem",
+                              fontSize: "1.05rem",
+                            }}
+                          />
+                          Continue to Checkout
+                        </>
+                      )}
                     </button>
                   ) : (
                     <button
@@ -442,6 +458,12 @@ export default function WeddingHostLogin() {
                       Continue
                     </button>
                   )}
+
+                  {!hasActiveWeddingPass(hostUser) ? (
+                    <div className="ss-checkout-note">
+                      Secure checkout powered by Stripe
+                    </div>
+                  ) : null}
                 </div>
               </>
             )}
@@ -452,13 +474,18 @@ export default function WeddingHostLogin() {
   }
 
   return (
-    <div className="home-container">
+    <div className="home-container login-container">
       <div className="screen wedding-home ss-editorial">
         <div className="ss-card">
           <div className="ss-header">
             <h1 className="ss-title">
-              {mode === "create" ? "Create Account" : "Sign In"}
+              {mode === "create" ? "Create your account" : "Sign in"}
             </h1>
+            <p className="ss-subtitle ss-subtitle--wide">
+              {mode === "create"
+                ? "Enter your email to get started. Then you can purchase your Event Pass and set up your event."
+                : "Sign in to continue managing your event."}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="ss-form">

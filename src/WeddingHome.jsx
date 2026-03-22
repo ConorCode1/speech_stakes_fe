@@ -319,9 +319,7 @@ export default function WeddingHome() {
             </div>
 
             <div className="ss-usecase-card">
-              <h3 className="ss-usecase-title">
-                Best men &amp; maids of honour
-              </h3>
+              <h3 className="ss-usecase-title">Bridal party</h3>
               <p className="ss-usecase-text">
                 Set up a fun extra for the speeches that surprises the room and
                 gives guests something to talk about.
@@ -339,7 +337,7 @@ export default function WeddingHome() {
         </div>
       </section>
 
-      <section className="ss-final-cta">
+      <section className="ss-final-cta" id="pricing">
         <div className="ss-final-cta-inner">
           <h2 className="ss-final-cta-title">
             Create a moment your guests will remember
@@ -388,7 +386,7 @@ export default function WeddingHome() {
           </div>
 
           <div className="ss-site-footer-copy">
-            Speech Stakes Registered 2026
+            Speech Stakes 2026, All Rights Reserved
           </div>
         </div>
       </footer>

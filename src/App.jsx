@@ -12,6 +12,7 @@ const WeddingResults = lazy(() => import("./WeddingResults"));
 const WeddingHostLogin = lazy(() => import("./WeddingHostLogin"));
 const WeddingJoin = lazy(() => import("./WeddingJoin"));
 const Contact = lazy(() => import("./Contact"));
+const Legal = lazy(() => import("./Legal"));
 
 function AppContent() {
   return (
@@ -43,6 +44,7 @@ function AppContent() {
           />
           <Route path="/weddingjoin" element={<WeddingJoin />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/legal" element={<Legal />} />
         </Routes>
       </Suspense>
     </>

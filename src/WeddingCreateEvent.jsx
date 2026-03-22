@@ -245,7 +245,7 @@ export default function WeddingCreateEvent() {
           </div>
 
           <p className="ss-subtitle ss-subtitle--tight">
-            Add the list of speakers, then create your event code.
+            Add your speakers to finish setting up your event.
           </p>
         </div>
 
@@ -253,7 +253,7 @@ export default function WeddingCreateEvent() {
           <div className="ss-section">
             <div className="ss-section__title">Speakers</div>
             <div className="ss-section__hint">
-              Add each speaker’s name and role.
+              Enter the name and role for each speaker.
             </div>
           </div>
 
@@ -339,10 +339,13 @@ export default function WeddingCreateEvent() {
 
           <button
             type="button"
-            className="ss-btn ss-btn--secondary"
+            className="ss-btn ss-btn--secondary ss-btn--with-icon"
             onClick={addSpeaker}
             disabled={isCreating}
           >
+            <span className="ss-btn__icon" aria-hidden="true">
+              +
+            </span>
             Add another speaker
           </button>
 
@@ -357,15 +360,9 @@ export default function WeddingCreateEvent() {
             >
               {isCreating ? "Creating..." : "Create event"}
             </button>
-
-            {/* <button
-              type="button"
-              className="ss-btn ss-btn--ghost"
-              onClick={handleResetDraft}
-              disabled={isCreating}
-            >
-              Reset
-            </button> */}
+            <div className="ss-created__hint ss-created__hint--precta">
+              You can add, remove, or edit speakers later if needed.
+            </div>
           </div>
 
           {created && joinCode ? (

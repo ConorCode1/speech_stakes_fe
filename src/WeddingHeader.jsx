@@ -144,6 +144,35 @@ export default function WeddingHeader() {
                   Home
                 </Link>
               </li>
+
+              <li>
+                <a
+                  href="/#how-it-works"
+                  className="wedding-nav-link"
+                  onClick={closeMenu}
+                >
+                  <Icon
+                    icon="mingcute:question-line"
+                    className="wedding-sidebar-item-icon"
+                  />
+                  How it Works
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="/#pricing"
+                  className="wedding-nav-link"
+                  onClick={closeMenu}
+                >
+                  <Icon
+                    icon="mdi:tag-outline"
+                    className="wedding-sidebar-item-icon"
+                  />
+                  Pricing
+                </a>
+              </li>
+
               <li>
                 <Link
                   to="/contact"
@@ -165,7 +194,7 @@ export default function WeddingHeader() {
                   onClick={closeMenu}
                 >
                   <Icon
-                    icon="mdi:login"
+                    icon="codicon:account"
                     className="wedding-sidebar-item-icon"
                   />
                   Login
@@ -173,16 +202,47 @@ export default function WeddingHeader() {
               </li>
 
               <li>
-                <Link
-                  to="/weddingabout"
+                <a
+                  href="https://www.instagram.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="wedding-nav-link"
                   onClick={closeMenu}
                 >
                   <Icon
-                    icon="mdi:information-outline"
+                    icon="mdi:instagram"
                     className="wedding-sidebar-item-icon"
                   />
-                  About
+                  Instagram
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="https://www.tiktok.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="wedding-nav-link"
+                  onClick={closeMenu}
+                >
+                  <Icon
+                    icon="ic:baseline-tiktok"
+                    className="wedding-sidebar-item-icon"
+                  />
+                  TikTok
+                </a>
+              </li>
+              <li>
+                <Link
+                  to="/legal"
+                  className="wedding-nav-link"
+                  onClick={closeMenu}
+                >
+                  <Icon
+                    icon="mdi:file-document-outline"
+                    className="wedding-sidebar-item-icon"
+                  />
+                  Legal
                 </Link>
               </li>
             </ul>

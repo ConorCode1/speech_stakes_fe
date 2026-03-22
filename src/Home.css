@@ -138,10 +138,24 @@ body {
 .ss-btn-white {
   background: #ffffff;
   color: var(--green);
+  border: 1px solid rgba(23, 33, 28, 0.08);
+  box-shadow:
+    0 10px 30px rgba(23, 33, 28, 0.12),
+    0 2px 8px rgba(23, 33, 28, 0.06);
 }
 
 .ss-btn-white:hover {
-  background: rgba(255, 255, 255, 0.94);
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 34px rgba(23, 33, 28, 0.16),
+    0 4px 10px rgba(23, 33, 28, 0.08);
+}
+
+.ss-btn-white:active {
+  transform: translateY(0);
+  box-shadow:
+    0 6px 18px rgba(23, 33, 28, 0.12),
+    0 2px 6px rgba(23, 33, 28, 0.06);
 }
 
 .ss-btn-ghost {
@@ -157,7 +171,7 @@ body {
 /* ── HERO ────────────────────────────────── */
 
 .ss-hero {
-  padding: 20px 20px 0;
+  padding: 29px 20px 0;
   text-align: center;
 }
 
@@ -946,4 +960,26 @@ html {
     width: 100%;
     min-width: 0;
   }
+}
+.legal-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 5rem 1.25rem;
+  color: var(--ink, #17211c);
+}
+
+.legal-section + .legal-section {
+  margin-top: 2.25rem;
+}
+
+.legal-subheading {
+  margin: 0 0 0.75rem;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.legal-container p {
+  margin: 0 0 1rem;
+  line-height: 1.7;
+  color: var(--ink-soft, #2f3d36);
 }
