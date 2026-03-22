@@ -11,6 +11,8 @@ export default function WeddingHome() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [showJoinForm, setShowJoinForm] = useState(false);
+
   const [showOverwritePrompt, setShowOverwritePrompt] = useState(false);
   const [pendingJoin, setPendingJoin] = useState(null);
 
@@ -110,6 +112,23 @@ export default function WeddingHome() {
     setPendingJoin(null);
   }
 
+  function handleJoinButtonClick() {
+    if (loading) return;
+
+    if (!showJoinForm) {
+      setError("");
+      setShowJoinForm(true);
+      return;
+    }
+
+    handleJoin();
+  }
+
+  function handleAccountClick(e) {
+    e.preventDefault();
+    navigate("/weddinghostlogin");
+  }
+
   return (
     <div className="ss-home-page">
       <section className="ss-hero" id="top">
@@ -138,48 +157,57 @@ export default function WeddingHome() {
             <div className="ss-join-block-header">
               <h2 className="ss-join-card-title">Already at a wedding?</h2>
               <p className="ss-join-card-subtitle">
-                Enter your code and name to play.
+                Join the game and make your guess
               </p>
             </div>
 
             <form onSubmit={handleJoin} className="ss-form">
-              <div className="ss-form-field">
-                <input
-                  id="joinCode"
-                  className="ss-form-input ss-code"
-                  type="text"
-                  inputMode="text"
-                  autoCapitalize="characters"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  placeholder="Enter event code"
-                  value={joinCode}
-                  onChange={(e) => setJoinCode(e.target.value)}
-                  onBlur={() => setJoinCode(cleanedJoinCode)}
-                  disabled={loading}
-                />
-              </div>
+              <div
+                className={`ss-join-form-wrap ${showJoinForm ? "is-open" : ""}`}
+              >
+                <div className="ss-join-form-inner">
+                  <div className="ss-form-field">
+                    <input
+                      id="joinCode"
+                      className="ss-form-input ss-code"
+                      type="text"
+                      inputMode="text"
+                      autoCapitalize="characters"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      placeholder="Enter event code"
+                      value={joinCode}
+                      onChange={(e) => setJoinCode(e.target.value)}
+                      onBlur={() => setJoinCode(cleanedJoinCode)}
+                      disabled={loading}
+                    />
+                  </div>
 
-              <div className="ss-form-field">
-                <input
-                  id="playerName"
-                  className="ss-form-input"
-                  type="text"
-                  placeholder="Enter your name"
-                  value={playerName}
-                  onChange={(e) => setPlayerName(e.target.value)}
-                  disabled={loading}
-                />
-              </div>
+                  <div className="ss-form-field">
+                    <input
+                      id="playerName"
+                      className="ss-form-input"
+                      type="text"
+                      placeholder="Enter your name"
+                      value={playerName}
+                      onChange={(e) => setPlayerName(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
 
-              {error ? <div className="ss-form-error">{error}</div> : null}
+                  {error ? <div className="ss-form-error">{error}</div> : null}
+                </div>
+              </div>
 
               <button
-                type="submit"
-                className="ss-btn ss-btn-green ss-btn-full ss-btn-form"
+                type="button"
+                className={`ss-btn ss-btn-full ss-btn-form ss-join-toggle-btn ${
+                  showJoinForm ? "ss-btn-dark" : "ss-btn-secondary-soft"
+                }`}
+                onClick={handleJoinButtonClick}
                 disabled={loading}
               >
-                {loading ? "Checking..." : "Join"}
+                {loading ? "Checking..." : "Join now"}
               </button>
             </form>
           </div>
@@ -213,33 +241,44 @@ export default function WeddingHome() {
             <div className="ss-step-card">
               <div className="ss-step-row">
                 <div className="ss-step-number">01</div>
-                <h3 className="ss-step-title">Create your event</h3>
+                <h3 className="ss-step-title">Set up</h3>
               </div>
               <p className="ss-step-text">
-                Set up your wedding event in under two minutes and get a unique
-                join code to share with guests.
+                Add your speakers and their roles so everything is ready to go
+                before the big day.
               </p>
             </div>
 
             <div className="ss-step-card">
               <div className="ss-step-row">
                 <div className="ss-step-number">02</div>
-                <h3 className="ss-step-title">Guests make their predictions</h3>
+                <h3 className="ss-step-title">Share</h3>
               </div>
               <p className="ss-step-text">
-                Before each speech, guests open their phones, enter the code,
-                and predict how long the speech will last.
+                Share your event code with guests, or print easy QR codes so
+                people can join quickly at the wedding.
               </p>
             </div>
 
             <div className="ss-step-card">
               <div className="ss-step-row">
                 <div className="ss-step-number">03</div>
-                <h3 className="ss-step-title">Reveal the result live</h3>
+                <h3 className="ss-step-title">Make predictions </h3>
               </div>
               <p className="ss-step-text">
-                Record the actual time when the speech ends and instantly see
-                who called it closest.
+                Guests join on their phones and predict how long each speech
+                will last.
+              </p>
+            </div>
+
+            <div className="ss-step-card">
+              <div className="ss-step-row">
+                <div className="ss-step-number">04</div>
+                <h3 className="ss-step-title">Reveal results</h3>
+              </div>
+              <p className="ss-step-text">
+                Record each actual speech time and reveal the leaderboard
+                instantly, with optional prizes for the winners.
               </p>
             </div>
           </div>
@@ -298,14 +337,6 @@ export default function WeddingHome() {
         </div>
       </section>
 
-      {/* <section className="ss-section ss-section-alt" id="pricing">
-        <div className="ss-section-inner ss-section-inner-narrow">
-          <div className="ss-section-kicker">Pricing</div>
-          <h2 className="ss-section-title">Simple pricing for wedding hosts</h2>
-          <p className="ss-section-text">Pricing details coming soon.</p>
-        </div>
-      </section> */}
-
       <section className="ss-final-cta">
         <div className="ss-final-cta-inner">
           <div className="ss-section-kicker ss-section-kicker-light">
@@ -328,6 +359,30 @@ export default function WeddingHome() {
           </button>
         </div>
       </section>
+
+      <footer className="ss-site-footer">
+        <div className="ss-site-footer-inner">
+          <div className="ss-site-footer-links">
+            <a href="/contact" className="ss-site-footer-link">
+              Contact
+            </a>
+            <a href="/legal" className="ss-site-footer-link">
+              Legal
+            </a>
+            <a
+              href="/weddinghostlogin"
+              className="ss-site-footer-link"
+              onClick={handleAccountClick}
+            >
+              Account
+            </a>
+          </div>
+
+          <div className="ss-site-footer-copy">
+            Speech Stakes Registered 2026
+          </div>
+        </div>
+      </footer>
 
       {showOverwritePrompt && pendingJoin ? (
         <div className="ss-modal-overlay">

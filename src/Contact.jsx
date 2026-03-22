@@ -27,15 +27,15 @@ export default function Contact() {
               <div className="ss-contact-content">
                 <div className="ss-contact-label">Email us</div>
                 <div className="ss-contact-value">speechstakes@gmail.com</div>
-                <div className="ss-contact-copy">
+                {/* <div className="ss-contact-copy">
                   Best for general questions, support, or account issues.
-                </div>
+                </div> */}
               </div>
 
               <Icon icon="mdi:chevron-right" className="ss-contact-chevron" />
             </a>
 
-            <a
+            {/* <a
               className="ss-contact-method"
               href="https://wa.me/353862101524"
               target="_blank"
@@ -54,7 +54,7 @@ export default function Contact() {
               </div>
 
               <Icon icon="mdi:chevron-right" className="ss-contact-chevron" />
-            </a>
+            </a> */}
           </div>
         </div>
       </div>

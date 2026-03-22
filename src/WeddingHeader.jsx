@@ -154,7 +154,7 @@ export default function WeddingHeader() {
                     icon="mdi:message-text-outline"
                     className="wedding-sidebar-item-icon"
                   />
-                  Contact Us
+                  Contact
                 </Link>
               </li>
 
