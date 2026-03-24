@@ -239,22 +239,22 @@ export default function WeddingCreateEvent() {
           <div className="ss-wedding-titleblock">
             <div className="ss-wedding-overline">Create Event</div>
             <div className="ss-wedding-names">
-              <span className="ss-wedding-name">Set up your speakers</span>
+              <span className="ss-wedding-name">Add your speakers</span>
             </div>
             <div className="ss-wedding-underline" aria-hidden="true" />
           </div>
 
           <p className="ss-subtitle ss-subtitle--tight">
-            Add your speakers to finish setting up your event.
+            Add the speakers and their roles to finish setting up your event.
           </p>
         </div>
 
         <div className="ss-form">
           <div className="ss-section">
-            <div className="ss-section__title">Speakers</div>
+            {/* <div className="ss-section__title">Speakers</div>
             <div className="ss-section__hint">
               Enter the name and role for each speaker.
-            </div>
+            </div> */}
           </div>
 
           <div className="ss-list">

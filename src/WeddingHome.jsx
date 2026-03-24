@@ -130,23 +130,22 @@ export default function WeddingHome() {
   }
 
   return (
-    <div className="ss-home-page">
-      <section className="ss-hero" id="top">
-        <div className="ss-hero-inner">
-          <h1 className="ss-hero-title">
+    <div className="home-page">
+      <section className="home-hero" id="top">
+        <div className="home-hero-inner">
+          <h1 className="home-hero-title">
             The wedding speech game your guests will <em>love</em>.
-            {/* The wedding speech game your guests will <em>love</em>. */}
           </h1>
 
-          <p className="ss-hero-subtitle">
+          <p className="home-hero-subtitle">
             Guests predict how long each speech will last. The closest guess
             wins.
           </p>
 
-          <div className="ss-hero-actions-stack">
+          <div className="home-hero-actions">
             <button
               type="button"
-              className="ss-btn ss-btn-primary ss-btn-lg ss-btn-full"
+              className="ss-btn home-btn home-btn-primary home-btn-lg home-btn-full"
               onClick={handleCreate}
               disabled={loading}
             >
@@ -154,23 +153,23 @@ export default function WeddingHome() {
             </button>
           </div>
 
-          <div className="ss-join-block">
-            <div className="ss-join-block-header">
-              <h2 className="ss-join-card-title">Already at a wedding?</h2>
-              <p className="ss-join-card-subtitle">
+          <div className="home-join-block">
+            <div className="home-join-header">
+              <h2 className="home-join-title">Already at a wedding?</h2>
+              <p className="home-join-subtitle">
                 Join the game and make your guess
               </p>
             </div>
 
-            <form onSubmit={handleJoin} className="ss-form">
+            <form onSubmit={handleJoin} className="home-form">
               <div
-                className={`ss-join-form-wrap ${showJoinForm ? "is-open" : ""}`}
+                className={`home-join-form-wrap ${showJoinForm ? "is-open" : ""}`}
               >
-                <div className="ss-join-form-inner">
-                  <div className="ss-form-field">
+                <div className="home-join-form-inner">
+                  <div className="home-form-field">
                     <input
                       id="joinCode"
-                      className="ss-form-input ss-code"
+                      className="home-input home-code-input"
                       type="text"
                       inputMode="text"
                       autoCapitalize="characters"
@@ -184,10 +183,10 @@ export default function WeddingHome() {
                     />
                   </div>
 
-                  <div className="ss-form-field">
+                  <div className="home-form-field">
                     <input
                       id="playerName"
-                      className="ss-form-input"
+                      className="home-input"
                       type="text"
                       placeholder="Enter your name"
                       value={playerName}
@@ -196,14 +195,16 @@ export default function WeddingHome() {
                     />
                   </div>
 
-                  {error ? <div className="ss-form-error">{error}</div> : null}
+                  {error ? (
+                    <div className="home-form-error">{error}</div>
+                  ) : null}
                 </div>
               </div>
 
               <button
                 type="button"
-                className={`ss-btn ss-btn-full ss-btn-form ss-join-toggle-btn ${
-                  showJoinForm ? "ss-btn-dark" : "ss-btn-secondary-soft"
+                className={`ss-btn home-btn home-btn-full home-btn-form home-join-toggle-btn ${
+                  showJoinForm ? "home-btn-dark" : "home-btn-secondary-soft"
                 }`}
                 onClick={handleJoinButtonClick}
                 disabled={loading}
@@ -215,70 +216,71 @@ export default function WeddingHome() {
         </div>
       </section>
 
-      <section className="ss-proof-strip">
-        <div className="ss-proof-item">
-          <span className="ss-proof-number">Gets everyone involved</span>
-          <span className="ss-proof-label">Creates a fun shared moment</span>
+      <section className="home-proof-strip">
+        <div className="home-proof-item">
+          <span className="home-proof-number">Gets everyone involved</span>
+          <span className="home-proof-label">Creates a fun shared moment</span>
         </div>
-        <div className="ss-proof-item">
-          <span className="ss-proof-number">Quick to play</span>
-          <span className="ss-proof-label">
+
+        <div className="home-proof-item">
+          <span className="home-proof-number">Quick to play</span>
+          <span className="home-proof-label">
             Takes seconds to join and make a guess
           </span>
         </div>
 
-        <div className="ss-proof-item">
-          <span className="ss-proof-number">Unforgettable</span>
-          <span className="ss-proof-label">
+        <div className="home-proof-item">
+          <span className="home-proof-number">Unforgettable</span>
+          <span className="home-proof-label">
             Turns speeches into a highlight
           </span>
         </div>
       </section>
 
-      <section className="ss-section ss-section-alt" id="how-it-works">
-        <div className="ss-section-inner">
-          <div className="ss-section-kicker">How it works</div>
+      <section className="home-section home-section-alt" id="how-it-works">
+        <div className="home-section-inner">
+          <div className="home-section-kicker">How it works</div>
 
-          <div className="ss-steps">
-            <div className="ss-step-card">
-              <div className="ss-step-row">
-                <div className="ss-step-number">01</div>
-                <h3 className="ss-step-title">Set up</h3>
+          <div className="home-steps">
+            <div className="home-step-card">
+              <div className="home-step-row">
+                <div className="home-step-number">01</div>
+                <h3 className="home-step-title">Set up</h3>
               </div>
-              <p className="ss-step-text">
+              <p className="home-step-text">
                 Add your speakers and their roles so everything is ready to go
                 before the big day.
               </p>
             </div>
 
-            <div className="ss-step-card">
-              <div className="ss-step-row">
-                <div className="ss-step-number">02</div>
-                <h3 className="ss-step-title">Share</h3>
+            <div className="home-step-card">
+              <div className="home-step-row">
+                <div className="home-step-number">02</div>
+                <h3 className="home-step-title">Share</h3>
               </div>
-              <p className="ss-step-text">
+              <p className="home-step-text">
                 Share your event code with guests, or print easy QR codes so
                 people can join quickly at the wedding.
               </p>
             </div>
 
-            <div className="ss-step-card">
-              <div className="ss-step-row">
-                <div className="ss-step-number">03</div>
-                <h3 className="ss-step-title">Make predictions </h3>
+            <div className="home-step-card">
+              <div className="home-step-row">
+                <div className="home-step-number">03</div>
+                <h3 className="home-step-title">Make predictions</h3>
               </div>
-              <p className="ss-step-text">
+              <p className="home-step-text">
                 Guests join on their phones and predict how long each speech
                 will last.
               </p>
             </div>
 
-            <div className="ss-step-card">
-              <div className="ss-step-row">
-                <div className="ss-step-number">04</div>
-                <h3 className="ss-step-title">Reveal results</h3>
+            <div className="home-step-card">
+              <div className="home-step-row">
+                <div className="home-step-number">04</div>
+                <h3 className="home-step-title">Reveal results</h3>
               </div>
-              <p className="ss-step-text">
+              <p className="home-step-text">
                 Record each actual speech time and reveal the leaderboard
                 instantly, with optional prizes for the winners.
               </p>
@@ -287,13 +289,13 @@ export default function WeddingHome() {
         </div>
       </section>
 
-      <section className="ss-section ss-section-why" id="why-hosts-love-it">
-        <div className="ss-section-inner ss-section-inner-narrow">
-          <div className="ss-section-kicker">Why couples love it</div>
-          <h2 className="ss-section-title">
+      <section className="home-section home-section-why" id="why-hosts-love-it">
+        <div className="home-section-inner home-section-inner-narrow">
+          <div className="home-section-kicker">Why couples love it</div>
+          <h2 className="home-section-title">
             A simple way to add more fun to your day
           </h2>
-          <p className="ss-section-text ss-section-text-large">
+          <p className="home-section-text home-section-text-large">
             Speech Stakes adds a fun, interactive layer to one of the biggest
             parts of your wedding day. It is easy to set up, simple for guests
             to join, and creates a shared moment that sparks conversation and
@@ -302,33 +304,33 @@ export default function WeddingHome() {
         </div>
       </section>
 
-      <section className="ss-section ss-section-alt" id="perfect-for">
-        <div className="ss-section-inner">
-          <div className="ss-section-kicker">Perfect for</div>
-          <h2 className="ss-section-title">
+      <section className="home-section home-section-alt" id="perfect-for">
+        <div className="home-section-inner">
+          <div className="home-section-kicker">Perfect for</div>
+          <h2 className="home-section-title">
             Weddings that want a fun, modern guest experience
           </h2>
 
-          <div className="ss-usecases">
-            <div className="ss-usecase-card">
-              <h3 className="ss-usecase-title">Couples</h3>
-              <p className="ss-usecase-text">
+          <div className="home-usecases">
+            <div className="home-usecase-card">
+              <h3 className="home-usecase-title">Couples</h3>
+              <p className="home-usecase-text">
                 Add something interactive to your day that feels fresh, easy,
                 and genuinely enjoyable for guests.
               </p>
             </div>
 
-            <div className="ss-usecase-card">
-              <h3 className="ss-usecase-title">Bridal party</h3>
-              <p className="ss-usecase-text">
+            <div className="home-usecase-card">
+              <h3 className="home-usecase-title">Bridal party</h3>
+              <p className="home-usecase-text">
                 Set up a fun extra for the speeches that surprises the room and
                 gives guests something to talk about.
               </p>
             </div>
 
-            <div className="ss-usecase-card">
-              <h3 className="ss-usecase-title">Planners &amp; venues</h3>
-              <p className="ss-usecase-text">
+            <div className="home-usecase-card">
+              <h3 className="home-usecase-title">Planners &amp; venues</h3>
+              <p className="home-usecase-text">
                 Offer couples a polished interactive touch that adds energy to
                 the day without adding complexity.
               </p>
@@ -337,28 +339,28 @@ export default function WeddingHome() {
         </div>
       </section>
 
-      <section className="ss-final-cta" id="pricing">
-        <div className="ss-final-cta-inner">
-          <h2 className="ss-final-cta-title">
+      <section className="home-final-cta" id="pricing">
+        <div className="home-final-cta-inner">
+          <h2 className="home-final-cta-title">
             Create a moment your guests will remember
           </h2>
 
-          <p className="ss-final-cta-text">
+          <p className="home-final-cta-text">
             Set up your event in minutes, and create a fun live experience that
             brings the whole room together.
           </p>
 
-          <div className="ss-final-cta-actions">
-            <div className="ss-final-cta-price">
-              <span className="ss-final-cta-price-label">
+          <div className="home-final-cta-actions">
+            <div className="home-final-cta-price">
+              <span className="home-final-cta-price-label">
                 Everything you need for one event
               </span>
-              <span className="ss-final-cta-price-value">€24.99</span>
+              <span className="home-final-cta-price-value">€24.99</span>
             </div>
 
             <button
               type="button"
-              className="ss-btn ss-btn-white ss-btn-lg ss-final-cta-button"
+              className="ss-btn home-btn home-btn-white home-btn-lg home-final-cta-button"
               onClick={handleCreate}
               disabled={loading}
             >
@@ -367,39 +369,40 @@ export default function WeddingHome() {
           </div>
         </div>
       </section>
-      <footer className="ss-site-footer">
-        <div className="ss-site-footer-inner">
-          <div className="ss-site-footer-links">
-            <a href="/contact" className="ss-site-footer-link">
+
+      <footer className="home-site-footer">
+        <div className="home-site-footer-inner">
+          <div className="home-site-footer-links">
+            <a href="/contact" className="home-site-footer-link">
               Contact
             </a>
-            <a href="/legal" className="ss-site-footer-link">
+            <a href="/legal" className="home-site-footer-link">
               Legal
             </a>
             <a
               href="/weddinghostlogin"
-              className="ss-site-footer-link"
+              className="home-site-footer-link"
               onClick={handleAccountClick}
             >
               Account
             </a>
           </div>
 
-          <div className="ss-site-footer-copy">
+          <div className="home-site-footer-copy">
             Speech Stakes 2026, All Rights Reserved
           </div>
         </div>
       </footer>
 
       {showOverwritePrompt && pendingJoin ? (
-        <div className="ss-modal-overlay">
-          <div className="ss-modal-box">
-            <h3 className="ss-modal-title">Name already used</h3>
-            <p className="ss-modal-text">
+        <div className="home-modal-overlay">
+          <div className="home-modal-box">
+            <h3 className="home-modal-title">Name already used</h3>
+            <p className="home-modal-text">
               A prediction already exists for "{pendingJoin.name}". Would you
               like to overwrite it?
             </p>
-            <div className="ss-modal-actions">
+            <div className="home-modal-actions">
               <button
                 type="button"
                 className="ss-btn ss-btn-ghost"
@@ -409,7 +412,7 @@ export default function WeddingHome() {
               </button>
               <button
                 type="button"
-                className="ss-btn ss-btn-primary"
+                className="ss-btn home-btn home-btn-primary"
                 onClick={handleConfirmOverwrite}
               >
                 Yes, overwrite

@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Icon } from "@iconify/react";
 import QRCode from "react-qr-code";
 import "./WeddingApp.css";
 
@@ -93,15 +94,23 @@ function getLocalTimesKey(eventId) {
   return `wedding_manage_times_${eventId}`;
 }
 
+function makeDraftSpeaker() {
+  return {
+    draftId: `draft_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+    personName: "",
+    role: "Best Man",
+    actualMinutes: "",
+    actualSeconds: "",
+    isDraft: true,
+  };
+}
+
 export default function WeddingManageEvent() {
   const { eventId } = useParams();
   const navigate = useNavigate();
 
   const [eventData, setEventData] = useState(null);
   const [speakers, setSpeakers] = useState([]);
-
-  const [newSpeakerName, setNewSpeakerName] = useState("");
-  const [newSpeakerRole, setNewSpeakerRole] = useState("Best Man");
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -146,11 +155,13 @@ export default function WeddingManageEvent() {
       if (!eventId) return;
 
       try {
-        const payload = nextSpeakers.map((speaker) => ({
-          speakerId: speaker.speaker_id,
-          actualMinutes: speaker.actualMinutes ?? "",
-          actualSeconds: speaker.actualSeconds ?? "",
-        }));
+        const payload = nextSpeakers
+          .filter((speaker) => !speaker.isDraft)
+          .map((speaker) => ({
+            speakerId: speaker.speaker_id,
+            actualMinutes: speaker.actualMinutes ?? "",
+            actualSeconds: speaker.actualSeconds ?? "",
+          }));
 
         localStorage.setItem(
           getLocalTimesKey(eventId),
@@ -302,8 +313,30 @@ export default function WeddingManageEvent() {
     );
   }
 
-  async function handleAddSpeaker() {
+  function updateDraftSpeaker(draftId, patch) {
+    setSpeakers((prev) =>
+      prev.map((speaker) =>
+        speaker.draftId === draftId ? { ...speaker, ...patch } : speaker,
+      ),
+    );
+  }
+
+  function handleShowAddSpeakerCard() {
+    if (!canEdit || saving || deleting) return;
+
+    setError("");
+    setSpeakers((prev) => [...prev, makeDraftSpeaker()]);
+  }
+
+  async function handleSaveDraftSpeaker(draftSpeaker) {
     if (!canEdit || saving) return;
+
+    const trimmedName = (draftSpeaker.personName || "").trim();
+
+    if (!trimmedName) {
+      setError("Please enter a name for the new speaker.");
+      return;
+    }
 
     setSaving(true);
     setError("");
@@ -318,8 +351,8 @@ export default function WeddingManageEvent() {
             "x-wedding-host-user-id": hostUserId,
           },
           body: JSON.stringify({
-            personName: newSpeakerName.trim(),
-            role: newSpeakerRole,
+            personName: trimmedName,
+            role: draftSpeaker.role,
           }),
         },
       );
@@ -330,19 +363,19 @@ export default function WeddingManageEvent() {
         throw new Error(data.error || "Failed to add speaker.");
       }
 
-      updateSpeakers((prev) => [
-        ...prev,
-        {
-          ...data.speaker,
-          personName: data.speaker.speaker_name,
-          role: data.speaker.speaker_role,
-          actualMinutes: "",
-          actualSeconds: "",
-        },
-      ]);
-
-      setNewSpeakerName("");
-      setNewSpeakerRole("Best Man");
+      updateSpeakers((prev) =>
+        prev.map((speaker) =>
+          speaker.draftId === draftSpeaker.draftId
+            ? {
+                ...data.speaker,
+                personName: data.speaker.speaker_name,
+                role: data.speaker.speaker_role,
+                actualMinutes: "",
+                actualSeconds: "",
+              }
+            : speaker,
+        ),
+      );
     } catch (err) {
       console.error(err);
       setError(err.message || "Failed to add speaker.");
@@ -351,15 +384,22 @@ export default function WeddingManageEvent() {
     }
   }
 
-  async function handleDeleteSpeaker(speakerId) {
+  async function handleDeleteSpeaker(speaker) {
     if (!canEdit || saving) return;
+
+    if (speaker.isDraft) {
+      setSpeakers((prev) =>
+        prev.filter((item) => item.draftId !== speaker.draftId),
+      );
+      return;
+    }
 
     setSaving(true);
     setError("");
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/wedding/host/speakers/${speakerId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/wedding/host/speakers/${speaker.speaker_id}`,
         {
           method: "DELETE",
           headers: {
@@ -375,10 +415,10 @@ export default function WeddingManageEvent() {
       }
 
       updateSpeakers((prev) =>
-        prev.filter((speaker) => speaker.speaker_id !== speakerId),
+        prev.filter((item) => item.speaker_id !== speaker.speaker_id),
       );
 
-      if (timerSpeaker?.speaker_id === speakerId) {
+      if (timerSpeaker?.speaker_id === speaker.speaker_id) {
         closeTimerModal();
       }
     } catch (err) {
@@ -403,6 +443,15 @@ export default function WeddingManageEvent() {
 
   async function handleCompleteEvent() {
     if (saving || !canEdit) return;
+
+    const hasDraftSpeaker = speakers.some((speaker) => speaker.isDraft);
+    if (hasDraftSpeaker) {
+      setError(
+        "Please save or remove any new speaker card before completing the event.",
+      );
+      setShowCompleteConfirm(false);
+      return;
+    }
 
     const invalidSpeaker = speakers.find((speaker) => {
       return (
@@ -584,20 +633,6 @@ export default function WeddingManageEvent() {
     }
   }
 
-  async function handleNativeShare() {
-    if (!shareLink || !navigator.share) return;
-
-    try {
-      await navigator.share({
-        title: "Join wedding predictions",
-        text: `Join the wedding predictions for code ${eventData?.join_code}`,
-        url: shareLink,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   function handlePrintQr() {
     window.print();
   }
@@ -616,9 +651,13 @@ export default function WeddingManageEvent() {
     return (
       <div className="screen ss-editorial wedding-create">
         <div className="ss-card ss-card--wide ss-manage-card">
-          <div className="ss-manage-hero">
+          <div className="ss-manage-hero ss-manage-hero--compact">
             <div className="ss-wedding-overline">Manage Event</div>
-            <div className="ss-manage-hero__title">No event found</div>
+
+            <div className="ss-meta-pills">
+              <span className="ss-meta-pill">No event found</span>
+            </div>
+
             <div className="ss-section__hint">
               You do not currently have an event to manage.
             </div>
@@ -643,65 +682,53 @@ export default function WeddingManageEvent() {
   return (
     <div className="screen ss-editorial wedding-create">
       <div className="ss-card ss-card--wide ss-manage-card">
-        <div className="ss-manage-hero">
+        <div className="ss-manage-hero ss-manage-hero--compact">
           <div className="ss-wedding-overline">Manage Event</div>
-          <div className="ss-manage-hero__title">Manage my event</div>
 
           <div className="ss-meta-pills">
-            <span className="ss-meta-pill">Code {eventData?.join_code}</span>
+            <span className="ss-meta-pill">
+              Event code: {eventData?.join_code}
+            </span>
             <span className="ss-meta-pill">{statusLabel}</span>
           </div>
         </div>
 
         {error ? <div className="ss-error">{error}</div> : null}
 
-        <div className="ss-panel">
+        <div className="ss-panel ss-panel--share">
           <div className="ss-section">
-            <div className="ss-section__title">Share</div>
-            <div className="ss-section__hint">
-              Share this link or show the QR code so guests can join quickly.
-            </div>
+            <div className="ss-section__title">Share with guests</div>
           </div>
 
-          <div className="ss-field">
-            <label className="ss-label">Guest join link</label>
-            <input className="ss-input" value={shareLink} readOnly />
-          </div>
-
-          <div className="ss-actions ss-actions--stack-mobile">
+          <div className="ss-actions ss-actions--share">
             <button
               type="button"
-              className="ss-btn ss-btn--secondary"
+              className="ss-btn ss-btn--secondary ss-btn--with-icon"
               onClick={handleCopyShareLink}
               disabled={!shareLink}
             >
+              <Icon icon="mdi:content-copy" className="ss-btn__icon-svg" />
               Copy link
             </button>
 
-            {typeof navigator !== "undefined" && navigator.share ? (
-              <button
-                type="button"
-                className="ss-btn ss-btn--ghost"
-                onClick={handleNativeShare}
-                disabled={!shareLink}
-              >
-                Share link
-              </button>
-            ) : null}
-
             <button
               type="button"
-              className="ss-btn ss-btn--ghost"
+              className="ss-btn ss-btn--secondary ss-btn--with-icon"
               onClick={() => setShowQrModal(true)}
               disabled={!shareLink}
             >
+              <Icon icon="mdi:qrcode" className="ss-btn__icon-svg" />
               Show QR code
             </button>
           </div>
 
           {copyMessage ? (
-            <div className="ss-section__hint">{copyMessage}</div>
+            <div className="ss-share-feedback">{copyMessage}</div>
           ) : null}
+
+          <div className="ss-share-tip">
+            Tip: Print the QR code so guests can join easily at the wedding.
+          </div>
         </div>
 
         {isCompleted ? (
@@ -718,138 +745,187 @@ export default function WeddingManageEvent() {
           <div className="ss-section__hint">
             {isCompleted
               ? "Speech times are locked for this completed event."
-              : "Times are stored on this device as you go and submitted only when you press Everyone has spoken."}
+              : 'Enter times as you go. They’ll only be submitted when you press "Everyone has spoken".'}
           </div>
         </div>
 
         <div className="ss-list ss-list--speakers">
-          {speakers.map((speaker, idx) => (
-            <div className="ss-speaker-card" key={speaker.speaker_id}>
-              <div className="ss-speaker-card__top">
-                <span className="ss-row__badge">Speaker {idx + 1}</span>
+          {speakers.map((speaker) => {
+            if (speaker.isDraft) {
+              return (
+                <div
+                  className="ss-speaker-card ss-speaker-card--rich"
+                  key={speaker.draftId}
+                >
+                  <div className="ss-speaker-card__top">
+                    <div />
+                    <button
+                      type="button"
+                      className="ss-icon-btn ss-icon-btn--danger"
+                      onClick={() => handleDeleteSpeaker(speaker)}
+                      disabled={saving || deleting}
+                      title="Remove speaker"
+                    >
+                      ×
+                    </button>
+                  </div>
 
-                {canEdit ? (
-                  <button
-                    type="button"
-                    className="ss-icon-btn"
-                    onClick={() => handleDeleteSpeaker(speaker.speaker_id)}
-                    disabled={saving || deleting}
-                    title="Remove speaker"
-                  >
-                    ×
-                  </button>
+                  <div className="ss-grid-2">
+                    <div className="ss-field">
+                      <label className="ss-label">Speaker name</label>
+                      <input
+                        className="ss-input"
+                        value={speaker.personName}
+                        onChange={(e) =>
+                          updateDraftSpeaker(speaker.draftId, {
+                            personName: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. James"
+                        disabled={saving || deleting}
+                      />
+                    </div>
+
+                    <div className="ss-field">
+                      <label className="ss-label">Role</label>
+                      <select
+                        className="ss-select ss-select--full"
+                        value={speaker.role}
+                        onChange={(e) =>
+                          updateDraftSpeaker(speaker.draftId, {
+                            role: e.target.value,
+                          })
+                        }
+                        disabled={saving || deleting}
+                      >
+                        {ROLE_OPTIONS.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="ss-actions ss-actions--speaker-save">
+                    <button
+                      type="button"
+                      className="ss-btn ss-btn--secondary ss-btn--with-icon"
+                      onClick={() => handleSaveDraftSpeaker(speaker)}
+                      disabled={saving || deleting}
+                    >
+                      <Icon icon="mdi:plus" className="ss-btn__icon-svg" />
+                      Save speaker
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div
+                className="ss-speaker-card ss-speaker-card--rich"
+                key={speaker.speaker_id}
+              >
+                <div className="ss-speaker-card__top">
+                  <div className="ss-speaker-card__heading">
+                    <div className="ss-speaker-card__name">
+                      {speaker.personName}
+                    </div>
+                    <div className="ss-speaker-card__role">{speaker.role}</div>
+                  </div>
+
+                  {canEdit ? (
+                    <button
+                      type="button"
+                      className="ss-icon-btn ss-icon-btn--danger"
+                      onClick={() => handleDeleteSpeaker(speaker)}
+                      disabled={saving || deleting}
+                      title="Remove speaker"
+                    >
+                      ×
+                    </button>
+                  ) : null}
+                </div>
+
+                <div className="ss-time-entry">
+                  <div className="ss-time-entry__group">
+                    <label className="ss-label">Min</label>
+                    <select
+                      className="ss-select ss-select--full ss-input--time"
+                      value={speaker.actualMinutes}
+                      onChange={(e) =>
+                        handleSpeakerMinutesChange(speaker, e.target.value)
+                      }
+                      disabled={!canEdit || saving || deleting}
+                    >
+                      <option value="">Min</option>
+                      {MINUTE_OPTIONS.map((minute) => (
+                        <option key={minute} value={minute}>
+                          {minute}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="ss-time-entry__colon">:</div>
+
+                  <div className="ss-time-entry__group">
+                    <label className="ss-label">Sec</label>
+                    <select
+                      className="ss-select ss-select--full ss-input--time"
+                      value={speaker.actualSeconds}
+                      onChange={(e) =>
+                        handleSpeakerSecondsChange(speaker, e.target.value)
+                      }
+                      disabled={!canEdit || saving || deleting}
+                    >
+                      <option value="">Sec</option>
+                      {SECOND_OPTIONS.map((second) => (
+                        <option key={second} value={second}>
+                          {second}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {!isCompleted ? (
+                  <div className="ss-actions ss-actions--speaker-timer">
+                    <button
+                      type="button"
+                      className="ss-btn ss-btn--timer ss-btn--with-icon ss-btn--compact"
+                      onClick={() => openTimerModal(speaker)}
+                      disabled={saving || deleting}
+                    >
+                      <Icon
+                        icon="mdi:timer-outline"
+                        className="ss-btn__icon-svg"
+                      />
+                      Use timer
+                    </button>
+                  </div>
                 ) : null}
               </div>
-
-              <div className="ss-speaker-card__name">{speaker.personName}</div>
-              <div className="ss-speaker-card__role">{speaker.role}</div>
-
-              {!isCompleted ? (
-                <div className="ss-actions">
-                  <button
-                    type="button"
-                    className="ss-btn ss-btn--ghost ss-btn--compact"
-                    onClick={() => openTimerModal(speaker)}
-                    disabled={saving || deleting}
-                  >
-                    Use timer
-                  </button>
-                </div>
-              ) : null}
-
-              <div className="ss-time-entry">
-                <div className="ss-time-entry__group">
-                  <label className="ss-label">Min</label>
-                  <select
-                    className="ss-select ss-select--full ss-input--time"
-                    value={speaker.actualMinutes}
-                    onChange={(e) =>
-                      handleSpeakerMinutesChange(speaker, e.target.value)
-                    }
-                    disabled={!canEdit || saving || deleting}
-                  >
-                    <option value="">Min</option>
-                    {MINUTE_OPTIONS.map((minute) => (
-                      <option key={minute} value={minute}>
-                        {minute}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="ss-time-entry__colon">:</div>
-
-                <div className="ss-time-entry__group">
-                  <label className="ss-label">Sec</label>
-                  <select
-                    className="ss-select ss-select--full ss-input--time"
-                    value={speaker.actualSeconds}
-                    onChange={(e) =>
-                      handleSpeakerSecondsChange(speaker, e.target.value)
-                    }
-                    disabled={!canEdit || saving || deleting}
-                  >
-                    <option value="">Sec</option>
-                    {SECOND_OPTIONS.map((second) => (
-                      <option key={second} value={second}>
-                        {second}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {canEdit ? (
-          <div className="ss-panel ss-panel--add-speaker">
-            <div className="ss-section">
-              <div className="ss-section__title">Add speaker</div>
-              <div className="ss-section__hint">
-                Add another speaker to the running order.
-              </div>
-            </div>
-
-            <div className="ss-grid-2">
-              <div className="ss-field">
-                <label className="ss-label">Speaker name</label>
-                <input
-                  className="ss-input"
-                  value={newSpeakerName}
-                  onChange={(e) => setNewSpeakerName(e.target.value)}
-                  placeholder="e.g. James"
-                  disabled={saving || deleting}
-                />
-              </div>
-
-              <div className="ss-field">
-                <label className="ss-label">Role</label>
-                <select
-                  className="ss-select ss-select--full"
-                  value={newSpeakerRole}
-                  onChange={(e) => setNewSpeakerRole(e.target.value)}
-                  disabled={saving || deleting}
-                >
-                  {ROLE_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="ss-actions">
-              <button
-                type="button"
-                className="ss-btn ss-btn--secondary"
-                onClick={handleAddSpeaker}
-                disabled={saving || deleting}
-              >
-                Add speaker
-              </button>
-            </div>
+          <div className="ss-actions ss-actions--add-speaker-button">
+            <button
+              type="button"
+              className="ss-btn ss-btn--secondary ss-btn--with-icon"
+              onClick={handleShowAddSpeakerCard}
+              disabled={
+                saving ||
+                deleting ||
+                speakers.some((speaker) => speaker.isDraft)
+              }
+            >
+              <Icon icon="mdi:plus" className="ss-btn__icon-svg" />
+              Add speaker
+            </button>
           </div>
         ) : null}
 
@@ -1014,23 +1090,17 @@ export default function WeddingManageEvent() {
         <div className="ss-modal-backdrop">
           <div className="ss-modal-card ss-qr-modal-card">
             <div className="ss-qr-print-area">
-              <h3 className="ss-modal-title">Scan to join</h3>
-              <p className="ss-modal-text">
-                Guests can scan this QR code to open the join page directly.
-              </p>
-
-              <div className="ss-qr-code-wrap">
-                <div className="ss-qr-code-surface">
-                  <QRCode value={shareLink} size={220} />
+              <div className="ss-qr-poster">
+                <div className="ss-qr-poster__text">
+                  Scan the QR code to predict how long the wedding speeches will
+                  last.
                 </div>
-              </div>
 
-              <div className="ss-qr-meta">
-                <div className="ss-qr-meta__title">Speech Stakes</div>
-                <div className="ss-qr-meta__code">
-                  Code: {eventData?.join_code}
+                <div className="ss-qr-code-wrap">
+                  <div className="ss-qr-code-surface ss-qr-code-surface--poster">
+                    <QRCode value={shareLink} size={220} />
+                  </div>
                 </div>
-                <div className="ss-qr-meta__link">{shareLink}</div>
               </div>
             </div>
 
