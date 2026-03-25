@@ -850,7 +850,7 @@ export default function WeddingManageEvent() {
 
                 <div className="ss-time-entry">
                   <div className="ss-time-entry__group">
-                    <label className="ss-label">Min</label>
+                    {/* <label className="ss-label">Min</label> */}
                     <select
                       className="ss-select ss-select--full ss-input--time"
                       value={speaker.actualMinutes}
@@ -871,7 +871,7 @@ export default function WeddingManageEvent() {
                   <div className="ss-time-entry__colon">:</div>
 
                   <div className="ss-time-entry__group">
-                    <label className="ss-label">Sec</label>
+                    {/* <label className="ss-label">Sec</label> */}
                     <select
                       className="ss-select ss-select--full ss-input--time"
                       value={speaker.actualSeconds}
@@ -1028,8 +1028,20 @@ export default function WeddingManageEvent() {
       ) : null}
 
       {timerSpeaker ? (
-        <div className="ss-modal-backdrop">
-          <div className="ss-modal-card">
+        <div className="ss-modal-backdrop" onClick={closeTimerModal}>
+          <div
+            className="ss-modal-card ss-timer-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="ss-modal-close"
+              onClick={closeTimerModal}
+              aria-label="Close timer"
+            >
+              ×
+            </button>
+
             <h3 className="ss-modal-title">
               Timer for {timerSpeaker.personName || "speaker"}
             </h3>
@@ -1043,68 +1055,109 @@ export default function WeddingManageEvent() {
               {formatClock(timerElapsedSeconds)}
             </div>
 
-            <div className="ss-actions ss-actions--stack-mobile">
-              {!timerRunning ? (
+            <div className="ss-timer-actions">
+              <div className="ss-timer-actions__top">
+                {!timerRunning ? (
+                  <button
+                    type="button"
+                    className="ss-btn ss-btn--primary"
+                    onClick={handleStartTimer}
+                    disabled={saving}
+                  >
+                    {timerElapsedSeconds > 0 ? "Resume timer" : "Start timer"}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="ss-btn ss-btn--secondary"
+                    onClick={handlePauseTimer}
+                    disabled={saving}
+                  >
+                    Pause timer
+                  </button>
+                )}
+              </div>
+
+              <div className="ss-timer-actions__middle">
                 <button
                   type="button"
                   className="ss-btn ss-btn--primary"
-                  onClick={handleStartTimer}
+                  onClick={handleSubmitTimedSpeaker}
                   disabled={saving}
                 >
-                  {timerElapsedSeconds > 0 ? "Resume timer" : "Start timer"}
+                  Submit time
                 </button>
-              ) : (
+              </div>
+
+              <div className="ss-timer-actions__bottom">
                 <button
                   type="button"
-                  className="ss-btn ss-btn--secondary"
-                  onClick={handlePauseTimer}
+                  className="ss-btn ss-btn--ghost"
+                  onClick={handleResetTimer}
                   disabled={saving}
                 >
-                  Pause timer
+                  Reset
                 </button>
-              )}
-
-              <button
-                type="button"
-                className="ss-btn ss-btn--ghost"
-                onClick={handleResetTimer}
-                disabled={saving}
-              >
-                Reset
-              </button>
-
-              <button
-                type="button"
-                className="ss-btn ss-btn--primary"
-                onClick={handleSubmitTimedSpeaker}
-                disabled={saving}
-              >
-                Submit time
-              </button>
+              </div>
             </div>
           </div>
         </div>
       ) : null}
-
       {showQrModal ? (
         <div className="ss-modal-backdrop">
           <div className="ss-modal-card ss-qr-modal-card">
-            <div className="ss-qr-print-area">
-              <div className="ss-qr-poster">
-                <div className="ss-qr-poster__text">
-                  Scan the QR code to predict how long the wedding speeches will
-                  last.
+            <div className="ss-qr-modal-simple ss-screen-only">
+              <div className="ss-qr-modal-simple__text">
+                Scan to join and predict the wedding speeches.
+              </div>
+
+              <div className="ss-qr-code-wrap">
+                <div className="ss-qr-code-surface">
+                  <QRCode value={shareLink} size={220} />
+                </div>
+              </div>
+            </div>
+
+            <div className="ss-print-poster" id="wedding-qr-print-poster">
+              <div className="ss-print-poster__inner">
+                <div className="ss-print-poster__eyebrow">
+                  Wedding Speech Predictions
                 </div>
 
-                <div className="ss-qr-code-wrap">
-                  <div className="ss-qr-code-surface ss-qr-code-surface--poster">
-                    <QRCode value={shareLink} size={220} />
+                <h1 className="ss-print-poster__title">
+                  Scan to join the game
+                </h1>
+
+                <p className="ss-print-poster__subtitle">
+                  Predict how long each wedding speech will last on your phone.
+                </p>
+
+                <div className="ss-print-poster__middle">
+                  <div className="ss-print-poster__qr-surface">
+                    <QRCode value={shareLink} size={300} />
+                  </div>
+                </div>
+
+                <div className="ss-print-poster__bottom">
+                  <div className="ss-print-poster__step">
+                    <span className="ss-print-poster__step-number">1</span>
+                    <span>Scan the QR code with your phone camera</span>
+                  </div>
+
+                  <div className="ss-print-poster__step">
+                    <span className="ss-print-poster__step-number">2</span>
+                    <span>Enter your name and make your predictions</span>
+                  </div>
+
+                  <div className="ss-print-poster__step">
+                    <span className="ss-print-poster__step-number">3</span>
+                    <span>See who was closest after the speeches</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="ss-actions ss-actions--stack-mobile ss-no-print">
+            <div className="ss-actions ss-actions--stack-mobile ss-screen-only">
               <button
                 type="button"
                 className="ss-btn ss-btn--ghost"

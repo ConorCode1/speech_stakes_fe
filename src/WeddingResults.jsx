@@ -92,6 +92,7 @@ export default function WeddingResults() {
   const [speakerSummaries, setSpeakerSummaries] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState("overall");
   const [hasShownConfetti, setHasShownConfetti] = useState(false);
+  const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
     if (!joinCode) return;
@@ -108,6 +109,7 @@ export default function WeddingResults() {
   useEffect(() => {
     setHasShownConfetti(false);
     setSelectedFilter("overall");
+    setShowStats(false);
   }, [joinCode]);
 
   useEffect(() => {
@@ -173,6 +175,7 @@ export default function WeddingResults() {
       bySpeaker: {},
     });
     setSpeakerSummaries([]);
+    setShowStats(false);
 
     loadResults();
 
@@ -263,10 +266,13 @@ export default function WeddingResults() {
   if (loading) {
     return (
       <div className="screen ss-editorial wedding-predictions">
-        <div className="ss-card ss-card--wide">
-          <div className="ss-header">
-            <h1 className="ss-title">SpeechStakes</h1>
-            <p className="ss-subtitle">Loading results...</p>
+        <div className="ss-card ss-card--wide ss-results-page-card">
+          <div className="ss-results-page-header">
+            <div className="ss-results-page-title">Results</div>
+          </div>
+
+          <div className="ss-results-panel">
+            <div className="ss-results-empty">Loading results...</div>
           </div>
         </div>
       </div>
@@ -276,11 +282,15 @@ export default function WeddingResults() {
   if (!eventData) {
     return (
       <div className="screen ss-editorial wedding-predictions">
-        <div className="ss-card ss-card--wide">
-          <div className="ss-header">
-            <h1 className="ss-title">SpeechStakes</h1>
-            <p className="ss-subtitle">Results unavailable</p>
+        <div className="ss-card ss-card--wide ss-results-page-card">
+          <div className="ss-results-page-header">
+            <div className="ss-results-page-title">Results</div>
           </div>
+
+          <div className="ss-results-panel">
+            <div className="ss-results-empty">Results unavailable.</div>
+          </div>
+
           {error ? <div className="ss-error">{error}</div> : null}
         </div>
       </div>
@@ -290,16 +300,18 @@ export default function WeddingResults() {
   if (!leaderboardReady) {
     return (
       <div className="screen ss-editorial wedding-predictions">
-        <div className="ss-card ss-card--wide ss-results-card">
-          <div className="ss-results-hero">
-            <div className="ss-wedding-overline">Results</div>
-            <div className="ss-results-hero__title">
-              Waiting for final times
+        <div className="ss-card ss-card--wide ss-results-page-card">
+          <div className="ss-results-page-header">
+            <div className="ss-results-page-title">Results</div>
+          </div>
+
+          <div className="ss-results-panel">
+            <div className="ss-results-panel__metric">
+              The host is still entering the final speech times.
             </div>
-            <p className="ss-results-hero__text">
-              The host is still entering the final speech times. This page will
-              update automatically once the leaderboard is ready.
-            </p>
+            <div className="ss-results-empty">
+              This page will update automatically once the leaderboard is ready.
+            </div>
           </div>
 
           {error ? <div className="ss-error">{error}</div> : null}
@@ -310,13 +322,13 @@ export default function WeddingResults() {
 
   return (
     <div className="screen ss-editorial wedding-predictions">
-      <div className="ss-card ss-card--wide ss-results-card">
-        <div className="ss-results-topbar">
-          <div className="ss-wedding-overline">Results</div>
+      <div className="ss-card ss-card--wide ss-results-page-card">
+        <div className="ss-results-page-header">
+          <div className="ss-results-page-title">Results</div>
 
-          <div className="ss-results-title-select">
+          <div className="ss-results-picker-wrap">
             <select
-              className="ss-results-title-select__input"
+              className="ss-results-picker"
               value={selectedFilter}
               onChange={(e) => {
                 const nextValue = e.target.value;
@@ -328,83 +340,117 @@ export default function WeddingResults() {
               }}
               aria-label="Select leaderboard"
             >
-              <option value="overall">Overall</option>
-              {(eventData.speakers || []).map((speaker) => (
+              <option value="overall">Overall leaderboard</option>
+              {(eventData?.speakers || []).map((speaker) => (
                 <option key={speaker.speakerId} value={speaker.speakerId}>
-                  {speaker.speakerRole}
+                  {speaker.speakerRole} leaderboard
                 </option>
               ))}
             </select>
-          </div>
 
-          <div className="ss-results-metric">{metricText}</div>
+            <Icon
+              icon="mdi:chevron-down"
+              className="ss-results-picker__icon"
+              aria-hidden="true"
+            />
+          </div>
         </div>
 
-        {currentRows.length === 0 ? (
-          <div className="ss-results-empty">No results available yet.</div>
-        ) : (
-          <>
-            {topThree.length > 0 ? (
-              <div className="ss-results-podium">
-                {topThree.map((row, idx) => (
-                  <div
-                    className={`ss-podium-card ss-podium-card--${Math.min(
-                      row.rank,
-                      3,
-                    )}`}
-                    key={getRowKey(row, idx)}
-                  >
-                    <div className="ss-podium-card__rank">
-                      {getMedalIcon(row.rank) || `#${row.rank}`}
-                    </div>
+        <div className="ss-results-metric-line">{metricText}</div>
 
-                    <div className="ss-podium-card__main">
-                      <div className="ss-podium-card__name">
-                        {row.playerName}
+        <div className="ss-results-scroll-area">
+          {currentRows.length === 0 ? (
+            <div className="ss-results-empty">No results available yet.</div>
+          ) : (
+            <>
+              {topThree.length > 0 ? (
+                <div className="ss-results-podium-cards">
+                  {topThree.map((row, idx) => (
+                    <div
+                      className={`ss-podium-card ss-podium-card--standalone ss-podium-card--${Math.min(
+                        row.rank,
+                        3,
+                      )}`}
+                      key={getRowKey(row, idx)}
+                    >
+                      <div className="ss-podium-card__rank">
+                        {getMedalIcon(row.rank) || `#${row.rank}`}
+                      </div>
+
+                      <div className="ss-podium-card__main">
+                        <div className="ss-podium-card__name">
+                          {row.playerName}
+                        </div>
+                      </div>
+
+                      <div className="ss-podium-card__score">
+                        {getRowValue(row)}
                       </div>
                     </div>
-
-                    <div className="ss-podium-card__score">
-                      {getRowValue(row)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-
-            {remainingRows.length > 0 ? (
-              <div className="ss-results-table ss-results-table--capped">
-                <div className="ss-results-table__head">
-                  <div>Rank</div>
-                  <div>Player</div>
-                  <div>Off by</div>
+                  ))}
                 </div>
+              ) : null}
 
-                {remainingRows.map((row, index) => (
-                  <div
-                    className="ss-results-table__row"
-                    key={getRowKey(row, index + 3)}
-                  >
-                    <div className="ss-results-table__rank">
-                      {getMedalIcon(row.rank) || `#${row.rank}`}
-                    </div>
-                    <div className="ss-results-table__player">
-                      {row.playerName}
-                    </div>
-                    <div className="ss-results-table__score">
-                      {getRowValue(row)}
-                    </div>
+              {remainingRows.length > 0 ? (
+                <div className="ss-results-table ss-results-table--standalone">
+                  <div className="ss-results-table__head">
+                    <div>Rank</div>
+                    <div>Player</div>
+                    <div>Off by</div>
                   </div>
-                ))}
-              </div>
-            ) : null}
-          </>
-        )}
 
+                  {remainingRows.map((row, index) => (
+                    <div
+                      className="ss-results-table__row"
+                      key={getRowKey(row, index + 3)}
+                    >
+                      <div className="ss-results-table__rank">
+                        {getMedalIcon(row.rank) || `#${row.rank}`}
+                      </div>
+                      <div className="ss-results-table__player">
+                        {row.playerName}
+                      </div>
+                      <div className="ss-results-table__score">
+                        {getRowValue(row)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </>
+          )}
+        </div>
         {error ? <div className="ss-error">{error}</div> : null}
+
+        {speakerSummaries.length > 0 ? (
+          <div className="ss-results-stats-bar">
+            {!showStats ? (
+              <button
+                type="button"
+                className="ss-btn ss-btn--secondary ss-btn--with-icon ss-results-stats-toggle__btn"
+                onClick={() => setShowStats(true)}
+              >
+                <Icon
+                  icon="mdi:chart-box-outline"
+                  className="ss-btn__icon-svg"
+                />
+                See stats
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="ss-btn ss-btn--ghost ss-btn--with-icon ss-results-stats-toggle__btn"
+                onClick={() => setShowStats(false)}
+              >
+                <Icon icon="mdi:chevron-up" className="ss-btn__icon-svg" />
+                Hide stats
+              </button>
+            )}
+          </div>
+        ) : null}
       </div>
 
-      {speakerSummaries.length > 0 ? (
+      {showStats && speakerSummaries.length > 0 ? (
         <div className="ss-speaker-summary-list">
           {speakerSummaries.map((speaker) => {
             const farthestAway =
@@ -440,7 +486,7 @@ export default function WeddingResults() {
 
                   <div className="ss-speaker-clean-stat">
                     <div className="ss-speaker-clean-stat__label">
-                      Average prediction time
+                      Average prediction
                     </div>
                     <div className="ss-speaker-clean-stat__big">
                       {formatSeconds(speaker.averagePredictionSeconds)}
