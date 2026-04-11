@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import WeddingHeader from "./WeddingHeader";
+import WeddingHome from "./WeddingHome";
 
-const WeddingHome = lazy(() => import("./WeddingHome"));
 const WeddingPredictionSelection = lazy(
   () => import("./WeddingPredictionSelection"),
 );
