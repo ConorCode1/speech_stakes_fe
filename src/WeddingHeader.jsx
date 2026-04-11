@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@iconify/react";
 import "./WeddingApp.css";
 
@@ -19,7 +19,6 @@ export default function WeddingHeader() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarClosing, setSidebarClosing] = useState(false);
-  const [showAccountModal, setShowAccountModal] = useState(false);
 
   const isWeddingHome = location.pathname === "/";
 
@@ -28,19 +27,6 @@ export default function WeddingHeader() {
   );
 
   const isLoggedIn = Boolean(hostUser?.userId && hostUser?.email);
-
-  const displayName = useMemo(() => {
-    if (!hostUser?.email) return "Guest";
-
-    if (hostUser.name) return hostUser.name;
-
-    const emailPrefix = String(hostUser.email).split("@")[0] || "";
-    if (!emailPrefix) return hostUser.email;
-
-    return emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
-  }, [hostUser]);
-
-  const subscriptionStatus = hostUser?.subscriptionStatus || "Free";
 
   function openMenu() {
     setSidebarClosing(false);
@@ -73,18 +59,12 @@ export default function WeddingHeader() {
     navigate("/");
   }
 
-  function handleAccountClick() {
-    if (!isLoggedIn) {
-      navigate("/weddinghostlogin");
-      return;
-    }
+  function handleAccountNavigation() {
+    closeMenu();
 
-    setShowAccountModal(true);
-  }
-
-  function handleLogout() {
-    localStorage.removeItem(LS_WEDDING_HOST_USER_KEY);
-    setShowAccountModal(false);
+    // Keep the same behaviour as the old login flow:
+    // - not logged in: login / sign-up page
+    // - logged in: that page can route them to manage event or create event
     navigate("/weddinghostlogin");
   }
 
@@ -114,8 +94,8 @@ export default function WeddingHeader() {
         <button
           type="button"
           className="wedding-header__right"
-          onClick={handleAccountClick}
-          aria-label={isLoggedIn ? "Open account" : "Go to login"}
+          onClick={handleAccountNavigation}
+          aria-label={isLoggedIn ? "Go to account" : "Go to login"}
         >
           <Icon
             icon="mdi:account-circle-outline"
@@ -142,6 +122,20 @@ export default function WeddingHeader() {
                     className="wedding-sidebar-item-icon"
                   />
                   Home
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/weddingjoin"
+                  className="wedding-nav-link"
+                  onClick={closeMenu}
+                >
+                  <Icon
+                    icon="gridicons:add-outline"
+                    className="wedding-sidebar-item-icon"
+                  />
+                  Join an event
                 </Link>
               </li>
 
@@ -188,17 +182,17 @@ export default function WeddingHeader() {
               </li>
 
               <li>
-                <Link
-                  to="/weddinghostlogin"
-                  className="wedding-nav-link"
-                  onClick={closeMenu}
+                <button
+                  type="button"
+                  className="wedding-nav-link  wedding-nav-button"
+                  onClick={handleAccountNavigation}
                 >
                   <Icon
                     icon="codicon:account"
                     className="wedding-sidebar-item-icon"
                   />
                   Login
-                </Link>
+                </button>
               </li>
 
               <li>
@@ -232,86 +226,9 @@ export default function WeddingHeader() {
                   TikTok
                 </a>
               </li>
-              <li>
-                <Link
-                  to="/legal"
-                  className="wedding-nav-link"
-                  onClick={closeMenu}
-                >
-                  <Icon
-                    icon="mdi:file-document-outline"
-                    className="wedding-sidebar-item-icon"
-                  />
-                  Legal
-                </Link>
-              </li>
             </ul>
           </aside>
         </>
-      )}
-
-      {showAccountModal && (
-        <div
-          className="ss-modal-backdrop"
-          onClick={() => setShowAccountModal(false)}
-        >
-          <div
-            className="ss-modal-card ss-account-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="ss-account-modal__header">
-              <h3 className="ss-modal-title">Your account</h3>
-
-              <button
-                type="button"
-                className="ss-icon-btn"
-                onClick={() => setShowAccountModal(false)}
-                aria-label="Close account modal"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="ss-account-modal__body">
-              <div className="ss-account-row">
-                <div className="ss-account-row__label">Username</div>
-                <div className="ss-account-row__value">{displayName}</div>
-              </div>
-
-              <div className="ss-account-row">
-                <div className="ss-account-row__label">Email</div>
-                <div className="ss-account-row__value">
-                  {hostUser?.email || "-"}
-                </div>
-              </div>
-
-              <div className="ss-account-row">
-                <div className="ss-account-row__label">Subscription</div>
-                <div className="ss-account-row__value">
-                  {subscriptionStatus}
-                </div>
-              </div>
-            </div>
-
-            <div className="ss-actions">
-              <button
-                type="button"
-                className="ss-btn ss-btn--ghost"
-                onClick={() => setShowAccountModal(false)}
-              >
-                Close
-              </button>
-
-              <button
-                type="button"
-                className="ss-btn ss-btn--primary"
-                onClick={handleLogout}
-              >
-                Log out
-              </button>
-            </div>
-          </div>
-        </div>
       )}
     </>
   );

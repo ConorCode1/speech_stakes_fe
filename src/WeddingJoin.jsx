@@ -14,6 +14,7 @@ export default function WeddingJoin() {
 
   const API_URL = import.meta.env.VITE_BACKEND_URL;
 
+  const [manualJoinCode, setManualJoinCode] = useState("");
   const [playerName, setPlayerName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,22 +22,29 @@ export default function WeddingJoin() {
   const [showOverwritePrompt, setShowOverwritePrompt] = useState(false);
   const [pendingJoin, setPendingJoin] = useState(null);
 
-  const joinCode = useMemo(() => {
+  const urlJoinCode = useMemo(() => {
     return String(query.get("code") || "")
       .replace(/\s+/g, "")
       .toUpperCase()
       .trim();
   }, [query]);
 
+  const cleanedManualJoinCode = useMemo(() => {
+    return manualJoinCode.replace(/\s+/g, "").toUpperCase().trim();
+  }, [manualJoinCode]);
+
+  const effectiveJoinCode = urlJoinCode || cleanedManualJoinCode;
+  const hasCodeInUrl = Boolean(urlJoinCode);
+
   async function handleJoin(e) {
     e.preventDefault();
     setError("");
 
-    const code = joinCode;
+    const code = effectiveJoinCode;
     const name = playerName.trim();
 
     if (!code) {
-      setError("This join link is missing an event code.");
+      setError("Please enter your event code.");
       return;
     }
 
@@ -123,6 +131,32 @@ export default function WeddingJoin() {
           </div>
 
           <form onSubmit={handleJoin} className="ss-form">
+            {!hasCodeInUrl ? (
+              <div className="ss-field">
+                <div className="ss-input-wrap">
+                  <Icon icon="bx:hash" className="ss-input-icon" />
+                  <input
+                    id="joinCode"
+                    className="ss-input ss-input--icon"
+                    type="text"
+                    inputMode="text"
+                    autoCapitalize="characters"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    placeholder="Enter event code"
+                    value={manualJoinCode}
+                    onChange={(e) => setManualJoinCode(e.target.value)}
+                    onBlur={() => setManualJoinCode(cleanedManualJoinCode)}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="ss-join-code-pill">
+                Event code: <strong>{urlJoinCode}</strong>
+              </div>
+            )}
+
             <div className="ss-field">
               <div className="ss-input-wrap">
                 <Icon icon="bx:user" className="ss-input-icon" />

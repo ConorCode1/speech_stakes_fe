@@ -152,67 +152,6 @@ export default function WeddingHome() {
               Get Started
             </button>
           </div>
-
-          <div className="home-join-block">
-            <div className="home-join-header">
-              <h2 className="home-join-title">Already at a wedding?</h2>
-              <p className="home-join-subtitle">
-                Join the game and make your guess
-              </p>
-            </div>
-
-            <form onSubmit={handleJoin} className="home-form">
-              <div
-                className={`home-join-form-wrap ${showJoinForm ? "is-open" : ""}`}
-              >
-                <div className="home-join-form-inner">
-                  <div className="home-form-field">
-                    <input
-                      id="joinCode"
-                      className="home-input home-code-input"
-                      type="text"
-                      inputMode="text"
-                      autoCapitalize="characters"
-                      autoCorrect="off"
-                      spellCheck={false}
-                      placeholder="Enter event code"
-                      value={joinCode}
-                      onChange={(e) => setJoinCode(e.target.value)}
-                      onBlur={() => setJoinCode(cleanedJoinCode)}
-                      disabled={loading}
-                    />
-                  </div>
-
-                  <div className="home-form-field">
-                    <input
-                      id="playerName"
-                      className="home-input"
-                      type="text"
-                      placeholder="Enter your name"
-                      value={playerName}
-                      onChange={(e) => setPlayerName(e.target.value)}
-                      disabled={loading}
-                    />
-                  </div>
-
-                  {error ? (
-                    <div className="home-form-error">{error}</div>
-                  ) : null}
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className={`ss-btn home-btn home-btn-full home-btn-form home-join-toggle-btn ${
-                  showJoinForm ? "home-btn-dark" : "home-btn-secondary-soft"
-                }`}
-                onClick={handleJoinButtonClick}
-                disabled={loading}
-              >
-                {loading ? "Checking..." : "Join now"}
-              </button>
-            </form>
-          </div>
         </div>
       </section>
 
@@ -366,6 +305,71 @@ export default function WeddingHome() {
             >
               Get started
             </button>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-guest-join-section">
+        <div className="home-guest-join-inner">
+          <div className="home-guest-join-card">
+            <div className="home-join-header">
+              <h2 className="home-join-title">Already at a wedding?</h2>
+              <p className="home-join-subtitle">
+                Join the game and make your guess
+              </p>
+            </div>
+
+            <form onSubmit={handleJoin} className="home-form">
+              <div
+                className={`home-join-form-wrap ${showJoinForm ? "is-open" : ""}`}
+              >
+                <div className="home-join-form-inner">
+                  <div className="home-form-field">
+                    <input
+                      id="joinCode"
+                      className="home-input home-code-input"
+                      type="text"
+                      inputMode="text"
+                      autoCapitalize="characters"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      placeholder="Enter event code"
+                      value={joinCode}
+                      onChange={(e) => setJoinCode(e.target.value)}
+                      onBlur={() => setJoinCode(cleanedJoinCode)}
+                      disabled={loading}
+                    />
+                  </div>
+
+                  <div className="home-form-field">
+                    <input
+                      id="playerName"
+                      className="home-input"
+                      type="text"
+                      placeholder="Enter your name"
+                      value={playerName}
+                      onChange={(e) => setPlayerName(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+
+                  {error ? (
+                    <div className="home-form-error">{error}</div>
+                  ) : null}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className={`ss-btn home-btn home-btn-full home-btn-form home-join-toggle-btn ${
+                  showJoinForm ? "home-btn-dark" : "home-btn-secondary-soft"
+                }`}
+                onClick={handleJoinButtonClick}
+                disabled={loading}
+              >
+                {loading ? "Checking..." : "Join now"}
+              </button>
+            </form>
           </div>
         </div>
       </section>
