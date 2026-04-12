@@ -199,7 +199,7 @@ html {
 .home-hero-title {
   font-size: clamp(38px, 11vw, 62px);
   font-weight: 800;
-  line-height: 1.02;
+  line-height: 1.17;
   letter-spacing: -0.03em;
   color: var(--ink);
   margin: 0 0 20px;
