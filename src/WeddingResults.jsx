@@ -252,7 +252,7 @@ export default function WeddingResults() {
 
   const metricText =
     selectedFilter === "overall"
-      ? "Lowest total time difference wins."
+      ? "Lowest combined difference wins"
       : "Lowest time difference wins.";
 
   const topThree = currentRows.slice(0, 3);
@@ -388,7 +388,7 @@ export default function WeddingResults() {
     <div className="screen ss-editorial wedding-predictions">
       <div className="ss-card ss-card--wide ss-results-page-card">
         <div className="ss-results-page-header">
-          <div className="ss-results-page-title">Results</div>
+          {/* <div className="ss-results-page-title">Results</div> */}
 
           <div className="ss-results-picker-wrap">
             <select
@@ -404,7 +404,7 @@ export default function WeddingResults() {
               }}
               aria-label="Select leaderboard"
             >
-              <option value="overall">Overall leaderboard</option>
+              <option value="overall">Overall Leaderboard</option>
               {(eventData?.speakers || []).map((speaker) => (
                 <option key={speaker.speakerId} value={speaker.speakerId}>
                   {speaker.speakerRole} leaderboard

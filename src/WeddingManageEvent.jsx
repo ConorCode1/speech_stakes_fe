@@ -86,10 +86,6 @@ function formatClock(totalSeconds) {
   )}`;
 }
 
-// function getEventStatusLabel(status) {
-//   return status === "completed" ? "Completed" : "In progress";
-// }
-
 function getLocalTimesKey(eventId) {
   return `wedding_manage_times_${eventId}`;
 }
@@ -136,10 +132,6 @@ export default function WeddingManageEvent() {
 
   const isCompleted = eventData?.status === "completed";
   const canEdit = !isCompleted;
-
-  // const statusLabel = useMemo(() => {
-  //   return getEventStatusLabel(eventData?.status);
-  // }, [eventData?.status]);
 
   const shareLink = useMemo(() => {
     if (!eventData?.join_code) return "";
@@ -845,7 +837,6 @@ export default function WeddingManageEvent() {
 
                 <div className="ss-time-entry">
                   <div className="ss-time-entry__group">
-                    {/* <label className="ss-label">Min</label> */}
                     <select
                       className="ss-select ss-select--full ss-input--time"
                       value={speaker.actualMinutes}
@@ -866,7 +857,6 @@ export default function WeddingManageEvent() {
                   <div className="ss-time-entry__colon">:</div>
 
                   <div className="ss-time-entry__group">
-                    {/* <label className="ss-label">Sec</label> */}
                     <select
                       className="ss-select ss-select--full ss-input--time"
                       value={speaker.actualSeconds}
@@ -1098,6 +1088,7 @@ export default function WeddingManageEvent() {
           </div>
         </div>
       ) : null}
+
       {showQrModal ? (
         <div className="ss-modal-backdrop">
           <div className="ss-modal-card ss-qr-modal-card">
@@ -1108,46 +1099,48 @@ export default function WeddingManageEvent() {
 
               <div className="ss-qr-code-wrap">
                 <div className="ss-qr-code-surface">
-                  <QRCode value={shareLink} size={220} />
+                  <QRCode
+                    value={shareLink}
+                    size={220}
+                    bgColor="#FFFFFF"
+                    fgColor="#000000"
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="ss-print-poster" id="wedding-qr-print-poster">
-              <div className="ss-print-poster__inner">
-                <div className="ss-print-poster__eyebrow">
-                  Wedding Speech Predictions
+            <div id="wedding-qr-print-poster" className="wedding-print-poster">
+              <div className="wedding-print-poster__inner">
+                <div className="wedding-print-poster__brand">Speech Stakes</div>
+
+                <h1 className="wedding-print-poster__title">Make Your Guess</h1>
+
+                <div className="wedding-print-poster__tagline">
+                  Predict the speech times. See who comes closest.
                 </div>
 
-                <h1 className="ss-print-poster__title">
-                  Scan to join the game
-                </h1>
+                <div className="wedding-print-poster__divider" />
 
-                <p className="ss-print-poster__subtitle">
-                  Predict how long each wedding speech will last on your phone.
+                <p className="wedding-print-poster__text">
+                  Scan the QR code, enter your name, and predict how long each
+                  speech will last.
                 </p>
 
-                <div className="ss-print-poster__middle">
-                  <div className="ss-print-poster__qr-surface">
-                    <QRCode value={shareLink} size={300} />
-                  </div>
+                <div className="wedding-print-poster__qr-box">
+                  <QRCode
+                    value={shareLink}
+                    size={180}
+                    bgColor="#FFFFFF"
+                    fgColor="#000000"
+                  />
                 </div>
 
-                <div className="ss-print-poster__bottom">
-                  <div className="ss-print-poster__step">
-                    <span className="ss-print-poster__step-number">1</span>
-                    <span>Scan the QR code with your phone camera</span>
-                  </div>
+                <div className="wedding-print-poster__scan-label">
+                  Scan to join
+                </div>
 
-                  <div className="ss-print-poster__step">
-                    <span className="ss-print-poster__step-number">2</span>
-                    <span>Enter your name and make your predictions</span>
-                  </div>
-
-                  <div className="ss-print-poster__step">
-                    <span className="ss-print-poster__step-number">3</span>
-                    <span>See who was closest after the speeches</span>
-                  </div>
+                <div className="wedding-print-poster__footer">
+                  Closest overall wins.
                 </div>
               </div>
             </div>

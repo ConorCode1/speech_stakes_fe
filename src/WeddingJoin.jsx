@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import "./WeddingApp.css";
@@ -22,6 +22,9 @@ export default function WeddingJoin() {
   const [showOverwritePrompt, setShowOverwritePrompt] = useState(false);
   const [pendingJoin, setPendingJoin] = useState(null);
 
+  const [checkingCompletedEvent, setCheckingCompletedEvent] = useState(false);
+  const [initialCodeCheckDone, setInitialCodeCheckDone] = useState(false);
+
   const urlJoinCode = useMemo(() => {
     return String(query.get("code") || "")
       .replace(/\s+/g, "")
@@ -35,6 +38,72 @@ export default function WeddingJoin() {
 
   const effectiveJoinCode = urlJoinCode || cleanedManualJoinCode;
   const hasCodeInUrl = Boolean(urlJoinCode);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function checkCompletedEventFromQrCode() {
+      if (!hasCodeInUrl || !urlJoinCode) {
+        setInitialCodeCheckDone(true);
+        return;
+      }
+
+      if (!API_URL) {
+        setError("API URL is missing.");
+        setInitialCodeCheckDone(true);
+        return;
+      }
+
+      setCheckingCompletedEvent(true);
+      setError("");
+
+      try {
+        const res = await fetch(
+          `${API_URL}/api/wedding/events/${encodeURIComponent(urlJoinCode)}`,
+        );
+
+        let data = null;
+
+        try {
+          data = await res.json();
+        } catch {
+          data = null;
+        }
+
+        if (cancelled) return;
+
+        if (!res.ok) {
+          setError(data?.error || `Request failed with status ${res.status}.`);
+          setInitialCodeCheckDone(true);
+          return;
+        }
+
+        if (data?.event?.status === "completed") {
+          navigate(`/weddingresults?code=${encodeURIComponent(urlJoinCode)}`, {
+            replace: true,
+          });
+          return;
+        }
+
+        setInitialCodeCheckDone(true);
+      } catch (err) {
+        if (cancelled) return;
+        console.error("Wedding join event status check failed:", err);
+        setError("Unable to connect. Please try again.");
+        setInitialCodeCheckDone(true);
+      } finally {
+        if (!cancelled) {
+          setCheckingCompletedEvent(false);
+        }
+      }
+    }
+
+    checkCompletedEventFromQrCode();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [API_URL, hasCodeInUrl, navigate, urlJoinCode]);
 
   async function handleJoin(e) {
     e.preventDefault();
@@ -78,6 +147,11 @@ export default function WeddingJoin() {
       }
 
       if (!res.ok) {
+        if (data?.code === "EVENT_COMPLETED") {
+          navigate(`/weddingresults?code=${encodeURIComponent(code)}`);
+          return;
+        }
+
         setError(data?.error || `Request failed with status ${res.status}.`);
         return;
       }
@@ -119,6 +193,25 @@ export default function WeddingJoin() {
     setPendingJoin(null);
   }
 
+  if (hasCodeInUrl && !initialCodeCheckDone) {
+    return (
+      <div className="home-container">
+        <div className="screen wedding-home ss-editorial">
+          <div className="ss-card">
+            <div className="ss-header">
+              <h1 className="ss-title">Speech Stakes</h1>
+              <p className="ss-subtitle">
+                {checkingCompletedEvent
+                  ? "Checking event..."
+                  : "Loading event..."}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="home-container">
       <div className="screen wedding-home ss-editorial">
@@ -152,9 +245,7 @@ export default function WeddingJoin() {
                 </div>
               </div>
             ) : (
-              <div className="ss-join-code-pill">
-                {/* Event code: <strong>{urlJoinCode}</strong> */}
-              </div>
+              <div className="ss-join-code-pill"></div>
             )}
 
             <div className="ss-field">
