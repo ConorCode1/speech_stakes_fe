@@ -5,6 +5,7 @@ import "./WeddingApp.css";
 const LS_PLAYER_ID_KEY = "wedding_player_id_v1";
 const LS_PLAYER_NAME_KEY = "wedding_player_name_v1";
 const LS_WEDDING_RESULTS_KEY = "wedding_last_results_v1";
+const LS_WEDDING_LAST_PREDICTIONS_KEY = "wedding_last_predictions_v1";
 
 function getOrCreatePlayerId() {
   const existing = localStorage.getItem(LS_PLAYER_ID_KEY);
@@ -239,6 +240,32 @@ export default function WeddingPredictionSelection() {
 
       localStorage.setItem(LS_PLAYER_NAME_KEY, trimmedName);
 
+      const savedPredictions = {
+        joinCode: event.joinCode,
+        playerId,
+        playerName: trimmedName,
+        savedAt: new Date().toISOString(),
+        predictions: event.speakers.map((s) => {
+          const p = predictions[s.speakerId] || { minutes: 0, seconds: 0 };
+          const minutes = clamp(p.minutes, 0, 59);
+          const seconds = clamp(p.seconds, 0, 59);
+
+          return {
+            speakerId: s.speakerId,
+            role: s.role,
+            personName: s.personName,
+            minutes,
+            seconds,
+            predictedSeconds: minutes * 60 + seconds,
+          };
+        }),
+      };
+
+      localStorage.setItem(
+        LS_WEDDING_LAST_PREDICTIONS_KEY,
+        JSON.stringify(savedPredictions),
+      );
+
       localStorage.setItem(
         LS_WEDDING_RESULTS_KEY,
         JSON.stringify({
@@ -290,17 +317,8 @@ export default function WeddingPredictionSelection() {
             Make your predictions
           </div>
 
-          {/* <div className="ss-meta-pills">
-            <span className="ss-meta-pill">Join code: {event.joinCode}</span>
-            <span className="ss-meta-pill">
-              {event.speakers.length}{" "}
-              {event.speakers.length === 1 ? "speech" : "speeches"}
-            </span>
-          </div> */}
-
           <p className="ss-predictions-hero__text">
-            Choose a predicted time for each speaker, then tap submit when you
-            are finished.
+            Predict a speech time for each speaker.
           </p>
         </div>
 
@@ -372,10 +390,6 @@ export default function WeddingPredictionSelection() {
           >
             {submitting ? "Submitting..." : "Submit predictions"}
           </button>
-
-          <div className="ss-footnote ss-footnote--center">
-            Tap submit after you have entered a time for every speaker.
-          </div>
         </div>
       </div>
     </div>

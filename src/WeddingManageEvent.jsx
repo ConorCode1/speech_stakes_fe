@@ -86,9 +86,9 @@ function formatClock(totalSeconds) {
   )}`;
 }
 
-function getEventStatusLabel(status) {
-  return status === "completed" ? "Completed" : "In progress";
-}
+// function getEventStatusLabel(status) {
+//   return status === "completed" ? "Completed" : "In progress";
+// }
 
 function getLocalTimesKey(eventId) {
   return `wedding_manage_times_${eventId}`;
@@ -137,9 +137,9 @@ export default function WeddingManageEvent() {
   const isCompleted = eventData?.status === "completed";
   const canEdit = !isCompleted;
 
-  const statusLabel = useMemo(() => {
-    return getEventStatusLabel(eventData?.status);
-  }, [eventData?.status]);
+  // const statusLabel = useMemo(() => {
+  //   return getEventStatusLabel(eventData?.status);
+  // }, [eventData?.status]);
 
   const shareLink = useMemo(() => {
     if (!eventData?.join_code) return "";
@@ -682,15 +682,10 @@ export default function WeddingManageEvent() {
   return (
     <div className="screen ss-editorial wedding-create">
       <div className="ss-card ss-card--wide ss-manage-card">
-        <div className="ss-manage-hero ss-manage-hero--compact">
-          <div className="ss-wedding-overline">Manage Event</div>
-
-          <div className="ss-meta-pills">
-            <span className="ss-meta-pill">
-              Event code: {eventData?.join_code}
-            </span>
-            <span className="ss-meta-pill">{statusLabel}</span>
-          </div>
+        <div className="ss-meta-pills">
+          <span className="ss-meta-pill">
+            Event code: {eventData?.join_code}
+          </span>
         </div>
 
         {error ? <div className="ss-error">{error}</div> : null}
@@ -741,11 +736,11 @@ export default function WeddingManageEvent() {
         ) : null}
 
         <div className="ss-section ss-section--speakers">
-          <div className="ss-section__title">Speakers</div>
+          <div className="ss-section__title_record">Record speaker times</div>
           <div className="ss-section__hint">
             {isCompleted
               ? "Speech times are locked for this completed event."
-              : 'Enter times as you go. They’ll only be submitted when you press "Everyone has spoken".'}
+              : ""}
           </div>
         </div>
 
@@ -933,7 +928,7 @@ export default function WeddingManageEvent() {
           {!isCompleted ? (
             <button
               type="button"
-              className="ss-btn ss-btn--primary ss-btn--final"
+              className="ss-btn ss-btn--primary ss-btn--finalme"
               onClick={() => setShowCompleteConfirm(true)}
               disabled={saving || deleting}
             >

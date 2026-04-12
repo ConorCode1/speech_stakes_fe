@@ -19,6 +19,7 @@ export default function WeddingHeader() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarClosing, setSidebarClosing] = useState(false);
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
 
   const isWeddingHome = location.pathname === "/";
 
@@ -59,12 +60,35 @@ export default function WeddingHeader() {
     navigate("/");
   }
 
+  function openAccountModal() {
+    setAccountModalOpen(true);
+  }
+
+  function closeAccountModal() {
+    setAccountModalOpen(false);
+  }
+
+  function handleGoToMyEvent() {
+    closeAccountModal();
+    closeMenu();
+    navigate("/weddinghostlogin");
+  }
+
+  function handleLogout() {
+    localStorage.removeItem(LS_WEDDING_HOST_USER_KEY);
+    closeAccountModal();
+    closeMenu();
+    navigate("/weddinghostlogin");
+  }
+
   function handleAccountNavigation() {
     closeMenu();
 
-    // Keep the same behaviour as the old login flow:
-    // - not logged in: login / sign-up page
-    // - logged in: that page can route them to manage event or create event
+    if (isLoggedIn) {
+      openAccountModal();
+      return;
+    }
+
     navigate("/weddinghostlogin");
   }
 
@@ -184,7 +208,7 @@ export default function WeddingHeader() {
               <li>
                 <button
                   type="button"
-                  className="wedding-nav-link  wedding-nav-button"
+                  className="wedding-nav-link wedding-nav-button"
                   onClick={handleAccountNavigation}
                 >
                   <Icon
@@ -198,7 +222,7 @@ export default function WeddingHeader() {
               <li>
                 <a
                   href="https://www.instagram.com/"
-                  target="_blank"
+                  target="speechstakes"
                   rel="noopener noreferrer"
                   className="wedding-nav-link"
                   onClick={closeMenu}
@@ -229,6 +253,67 @@ export default function WeddingHeader() {
             </ul>
           </aside>
         </>
+      )}
+
+      {accountModalOpen && (
+        <div
+          className="wedding-modal-overlay"
+          onClick={closeAccountModal}
+          role="presentation"
+        >
+          <div
+            className="wedding-modal"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="wedding-account-modal-title"
+          >
+            <button
+              type="button"
+              className="wedding-modal__close"
+              onClick={closeAccountModal}
+              aria-label="Close modal"
+            >
+              <Icon icon="mdi:close" />
+            </button>
+
+            <div className="wedding-modal__icon-wrap">
+              <Icon
+                icon="mdi:account-circle-outline"
+                className="wedding-modal__icon"
+              />
+            </div>
+
+            <h2
+              id="wedding-account-modal-title"
+              className="wedding-modal__title"
+            >
+              Account options
+            </h2>
+
+            <p className="wedding-modal__text">
+              You’re already logged in. What would you like to do?
+            </p>
+
+            <div className="wedding-modal__actions">
+              <button
+                type="button"
+                className="wedding-modal__button wedding-modal__button--primary"
+                onClick={handleGoToMyEvent}
+              >
+                Go to my event
+              </button>
+
+              <button
+                type="button"
+                className="wedding-modal__button wedding-modal__button--secondary"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

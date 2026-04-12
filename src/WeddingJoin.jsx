@@ -153,7 +153,7 @@ export default function WeddingJoin() {
               </div>
             ) : (
               <div className="ss-join-code-pill">
-                Event code: <strong>{urlJoinCode}</strong>
+                {/* Event code: <strong>{urlJoinCode}</strong> */}
               </div>
             )}
 

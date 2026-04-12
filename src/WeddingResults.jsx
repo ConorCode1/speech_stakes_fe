@@ -5,6 +5,7 @@ import confetti from "canvas-confetti";
 import "./WeddingApp.css";
 
 const SS_WEDDING_RESULTS_KEY = "wedding_last_results_v1";
+const LS_WEDDING_LAST_PREDICTIONS_KEY = "wedding_last_predictions_v1";
 
 function useQuery() {
   const { search } = useLocation();
@@ -76,10 +77,20 @@ export default function WeddingResults() {
 
   const storedSession =
     typeof window !== "undefined"
-      ? safeJsonParse(sessionStorage.getItem(SS_WEDDING_RESULTS_KEY))
+      ? safeJsonParse(localStorage.getItem(SS_WEDDING_RESULTS_KEY))
+      : null;
+
+  const savedPredictions =
+    typeof window !== "undefined"
+      ? safeJsonParse(localStorage.getItem(LS_WEDDING_LAST_PREDICTIONS_KEY))
       : null;
 
   const joinCode = codeFromUrl || storedSession?.joinCode || "";
+
+  const matchingSavedPredictions =
+    savedPredictions && savedPredictions.joinCode === joinCode
+      ? savedPredictions
+      : null;
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -97,7 +108,7 @@ export default function WeddingResults() {
   useEffect(() => {
     if (!joinCode) return;
 
-    sessionStorage.setItem(
+    localStorage.setItem(
       SS_WEDDING_RESULTS_KEY,
       JSON.stringify({
         joinCode,
@@ -302,17 +313,70 @@ export default function WeddingResults() {
       <div className="screen ss-editorial wedding-predictions">
         <div className="ss-card ss-card--wide ss-results-page-card">
           <div className="ss-results-page-header">
-            <div className="ss-results-page-title">Results</div>
+            {/* <div className="ss-results-page-title">Results</div> */}
           </div>
 
           <div className="ss-results-panel">
-            <div className="ss-results-panel__metric">
-              The host is still entering the final speech times.
-            </div>
+            <div className="ss-results-panel__metric"></div>
             <div className="ss-results-empty">
-              This page will update automatically once the leaderboard is ready.
+              The host is still entering the final speech times. This page will
+              update once the results are ready.
             </div>
           </div>
+
+          {matchingSavedPredictions?.predictions?.length > 0 ? (
+            <div className="ss-card ss-card--wide ss-waiting-predictions-card">
+              <div className="ss-speaker-clean-card__header">
+                <div className="ss-speaker-clean-card__title-wrap">
+                  <div className="ss-speaker-clean-card__role">
+                    Your predictions
+                  </div>
+                  {/* <div className="ss-speaker-clean-card__name">
+                    {matchingSavedPredictions.playerName || "Your latest entry"}
+                  </div> */}
+                </div>
+              </div>
+
+              <div className="ss-list ss-list--predictions">
+                {matchingSavedPredictions.predictions.map((prediction) => (
+                  <div
+                    className="ss-prediction-card ss-prediction-card--compact"
+                    key={prediction.speakerId}
+                  >
+                    <div className="ss-prediction-card__role">
+                      {prediction.role}
+                    </div>
+
+                    <div className="ss-prediction-card__name">
+                      {prediction.personName}
+                    </div>
+
+                    <div className="ss-prediction-saved-display">
+                      <div className="ss-prediction-saved-display__value">
+                        <span className="ss-prediction-saved-display__number">
+                          {prediction.minutes}
+                        </span>
+                        <span className="ss-prediction-saved-display__unit">
+                          min
+                        </span>
+
+                        <span className="ss-prediction-saved-display__divider">
+                          ·
+                        </span>
+
+                        <span className="ss-prediction-saved-display__number">
+                          {String(prediction.seconds).padStart(2, "0")}
+                        </span>
+                        <span className="ss-prediction-saved-display__unit">
+                          sec
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
           {error ? <div className="ss-error">{error}</div> : null}
         </div>
