@@ -221,8 +221,8 @@ export default function WeddingHeader() {
 
               <li>
                 <a
-                  href="https://www.instagram.com/"
-                  target="speechstakes"
+                  href="https://www.instagram.com/speechstakes/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="wedding-nav-link"
                   onClick={closeMenu}
@@ -237,7 +237,7 @@ export default function WeddingHeader() {
 
               <li>
                 <a
-                  href="https://www.tiktok.com/"
+                  href="https://www.tiktok.com/@speechstakes"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="wedding-nav-link"
