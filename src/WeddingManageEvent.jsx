@@ -1108,39 +1108,40 @@ export default function WeddingManageEvent() {
                 </div>
               </div>
             </div>
-
             <div id="wedding-qr-print-poster" className="wedding-print-poster">
               <div className="wedding-print-poster__inner">
-                <div className="wedding-print-poster__brand">Speech Stakes</div>
-
-                <h1 className="wedding-print-poster__title">Make Your Guess</h1>
-
-                <div className="wedding-print-poster__tagline">
-                  Predict the speech times. See who comes closest.
+                <div className="wedding-print-poster__corner wedding-print-poster__corner--tl">
+                  <span className="wedding-print-poster__corner-line"></span>
                 </div>
 
-                <div className="wedding-print-poster__divider" />
-
-                <p className="wedding-print-poster__text">
-                  Scan the QR code, enter your name, and predict how long each
-                  speech will last.
-                </p>
-
-                <div className="wedding-print-poster__qr-box">
-                  <QRCode
-                    value={shareLink}
-                    size={180}
-                    bgColor="#FFFFFF"
-                    fgColor="#000000"
-                  />
+                <div className="wedding-print-poster__corner wedding-print-poster__corner--br">
+                  <span className="wedding-print-poster__corner-line"></span>
                 </div>
 
-                <div className="wedding-print-poster__scan-label">
-                  Scan to join
-                </div>
+                <div className="wedding-print-poster__content">
+                  <h1 className="wedding-print-poster__title">
+                    Make Your Guess
+                  </h1>
 
-                <div className="wedding-print-poster__footer">
-                  Closest overall wins.
+                  <div className="wedding-print-poster__tagline">
+                    Join the game and predict how long each speech will last.
+                  </div>
+
+                  <div className="wedding-print-poster__divider" />
+
+                  <p className="wedding-print-poster__text">
+                    Scan the QR code, enter your name, and submit your
+                    predictions.
+                  </p>
+
+                  <div className="wedding-print-poster__qr-box">
+                    <QRCode
+                      value={shareLink}
+                      size={210}
+                      bgColor="#FFFFFF"
+                      fgColor="#000000"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
