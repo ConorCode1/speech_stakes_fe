@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
+import weddingCardImage from "./assets/ss-hero-photo.jpg";
 
 export default function WeddingHome() {
   const navigate = useNavigate();
@@ -151,6 +152,16 @@ export default function WeddingHome() {
             >
               Get Started
             </button>
+          </div>
+
+          <div className="home-mobile-demo-wrap">
+            <div className="home-mobile-demo-card">
+              <img
+                src={weddingCardImage}
+                alt="Preview of the Speech Stakes game card"
+                className="home-mobile-demo-image"
+              />
+            </div>
           </div>
         </div>
       </section>

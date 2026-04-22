@@ -2879,3 +2879,51 @@ body {
     border: none !important;
   }
 }
+
+.home-mobile-demo-wrap {
+  display: none;
+}
+
+.home-mobile-demo-card {
+  background: #ffffff;
+  border-radius: 28px;
+  box-shadow:
+    0 18px 50px rgba(16, 24, 40, 0.08),
+    0 6px 18px rgba(16, 24, 40, 0.05);
+  overflow: hidden;
+  padding: 0;
+}
+
+.home-mobile-demo-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Mobile only */
+@media (max-width: 767px) {
+  .home-mobile-demo-wrap {
+    display: block;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .home-mobile-demo-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-mobile-demo-wrap {
+    display: block;
+    margin-top: 12px;
+    width: 100%;
+    padding: 0 2px;
+  }
+
+  .home-mobile-demo-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
