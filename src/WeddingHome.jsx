@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import weddingCardImage from "./assets/ss-hero-photo.jpg";
+import { Icon } from "@iconify/react";
 
 export default function WeddingHome() {
   const navigate = useNavigate();
@@ -167,73 +168,127 @@ export default function WeddingHome() {
       </section>
 
       <section className="home-proof-strip">
-        <div className="home-proof-item">
-          <span className="home-proof-number">Gets everyone involved</span>
-          <span className="home-proof-label">Creates a fun shared moment</span>
-        </div>
+        <div className="home-proof-inner">
+          <div className="home-section-kicker">Why guests love it</div>
 
-        <div className="home-proof-item">
-          <span className="home-proof-number">Quick to play</span>
-          <span className="home-proof-label">
-            Takes seconds to join and make a guess
-          </span>
-        </div>
+          <div className="home-proof-grid">
+            <div className="home-proof-card">
+              <div className="home-proof-icon-wrap">
+                <Icon
+                  icon="solar:users-group-rounded-bold"
+                  className="home-proof-icon"
+                />
+              </div>
+              <div className="home-proof-content">
+                <span className="home-proof-number">
+                  Gets everyone involved
+                </span>
+                <span className="home-proof-label">
+                  Creates a fun shared moment
+                </span>
+              </div>
+            </div>
 
-        <div className="home-proof-item">
-          <span className="home-proof-number">Unforgettable</span>
-          <span className="home-proof-label">
-            Turns speeches into a highlight
-          </span>
+            <div className="home-proof-card">
+              <div className="home-proof-icon-wrap">
+                <Icon icon="solar:bolt-bold" className="home-proof-icon" />
+              </div>
+              <div className="home-proof-content">
+                <span className="home-proof-number">Quick to play</span>
+                <span className="home-proof-label">
+                  Takes seconds to join and make a guess
+                </span>
+              </div>
+            </div>
+
+            <div className="home-proof-card">
+              <div className="home-proof-icon-wrap">
+                <Icon icon="solar:star-bold" className="home-proof-icon" />
+              </div>
+              <div className="home-proof-content">
+                <span className="home-proof-number">Unforgettable</span>
+                <span className="home-proof-label">
+                  Turns speeches into a highlight
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
-
       <section className="home-section home-section-alt" id="how-it-works">
         <div className="home-section-inner">
           <div className="home-section-kicker">How it works</div>
 
           <div className="home-steps">
             <div className="home-step-card">
-              <div className="home-step-row">
+              <div className="home-step-left">
                 <div className="home-step-number">01</div>
+                <div className="home-step-icon-wrap">
+                  <Icon icon="solar:settings-bold" className="home-step-icon" />
+                </div>
+              </div>
+
+              <div className="home-step-main">
                 <h3 className="home-step-title">Set up</h3>
+                <p className="home-step-text">
+                  Add your speakers and their roles so everything is ready to go
+                  before the big day.
+                </p>
               </div>
-              <p className="home-step-text">
-                Add your speakers and their roles so everything is ready to go
-                before the big day.
-              </p>
             </div>
 
             <div className="home-step-card">
-              <div className="home-step-row">
+              <div className="home-step-left">
                 <div className="home-step-number">02</div>
+                <div className="home-step-icon-wrap">
+                  <Icon icon="solar:qr-code-bold" className="home-step-icon" />
+                </div>
+              </div>
+
+              <div className="home-step-main">
                 <h3 className="home-step-title">Share</h3>
+                <p className="home-step-text">
+                  Share your event code with guests, or print easy QR codes so
+                  people can join quickly at the wedding.
+                </p>
               </div>
-              <p className="home-step-text">
-                Share your event code with guests, or print easy QR codes so
-                people can join quickly at the wedding.
-              </p>
             </div>
 
             <div className="home-step-card">
-              <div className="home-step-row">
+              <div className="home-step-left">
                 <div className="home-step-number">03</div>
-                <h3 className="home-step-title">Make predictions</h3>
+                <div className="home-step-icon-wrap">
+                  <Icon
+                    icon="solar:stopwatch-bold"
+                    className="home-step-icon"
+                  />
+                </div>
               </div>
-              <p className="home-step-text">
-                Guests join on their phones and predict how long each speech
-                will last.
-              </p>
+
+              <div className="home-step-main">
+                <h3 className="home-step-title">Make predictions</h3>
+                <p className="home-step-text">
+                  Guests join on their phones and predict how long each speech
+                  will last.
+                </p>
+              </div>
             </div>
 
             <div className="home-step-card">
-              <div className="home-step-row">
+              <div className="home-step-left">
                 <div className="home-step-number">04</div>
-                <h3 className="home-step-title">Reveal results</h3>
+                <div className="home-step-icon-wrap">
+                  <Icon icon="solar:cup-star-bold" className="home-step-icon" />
+                </div>
               </div>
-              <p className="home-step-text">
-                Record each actual speech time and reveal the leaderboard
-                instantly, with optional prizes for the winners.
-              </p>
+
+              <div className="home-step-main">
+                <h3 className="home-step-title">Reveal results</h3>
+                <p className="home-step-text">
+                  Record each actual speech time and reveal the leaderboard
+                  instantly, with optional prizes for the winners.
+                </p>
+              </div>
             </div>
           </div>
         </div>
