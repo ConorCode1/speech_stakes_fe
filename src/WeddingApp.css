@@ -2927,3 +2927,17 @@ body {
     max-width: 100%;
   }
 }
+.wedding-header__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+}
+
+.wedding-header__logo-icon {
+  width: 26px;
+  height: 26px;
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+}

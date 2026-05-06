@@ -716,6 +716,7 @@ html {
     gap: 36px;
     flex-wrap: wrap;
     align-items: flex-start;
+    background: var(--green-deep);
   }
 
   @media (min-width: 1024px) {
@@ -1052,6 +1053,7 @@ html {
 @media (min-width: 768px) {
   .home-proof-strip {
     padding: 36px 32px 42px;
+    /* background: var(--green-mid); */
   }
 
   .home-proof-inner {

@@ -2,6 +2,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import "./WeddingApp.css";
+import speechStakesIcon from "./assets/speechstakesicon.svg";
 
 const LS_WEDDING_HOST_USER_KEY = "wedding_host_user_v1";
 
@@ -112,7 +113,13 @@ export default function WeddingHeader() {
         </button>
 
         <Link to="/" className="wedding-header__title" onClick={closeMenu}>
-          SpeechStakes
+          <img
+            src={speechStakesIcon}
+            alt=""
+            className="wedding-header__logo-icon"
+            aria-hidden="true"
+          />
+          <span>SpeechStakes</span>
         </Link>
 
         <button
