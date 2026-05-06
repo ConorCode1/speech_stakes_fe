@@ -2930,7 +2930,7 @@ body {
 .wedding-header__title {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.3rem;
   text-decoration: none;
 }
 
@@ -2940,4 +2940,5 @@ body {
   display: block;
   object-fit: contain;
   flex-shrink: 0;
+  margin-top: -5px;
 }
