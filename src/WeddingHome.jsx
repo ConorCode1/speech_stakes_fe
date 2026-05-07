@@ -1,8 +1,34 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import weddingCardImage from "./assets/ss-hero-photo.jpg";
 import { Icon } from "@iconify/react";
+
+const LS_SPEECH_STAKES_VISITOR_ID_KEY = "speechstakes_visitor_id_v1";
+
+function createAnonymousVisitorId() {
+  if (window.crypto?.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+
+  return `ss_${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
+}
+
+function getOrCreateSpeechStakesVisitorId() {
+  try {
+    const existingId = localStorage.getItem(LS_SPEECH_STAKES_VISITOR_ID_KEY);
+
+    if (existingId) {
+      return existingId;
+    }
+
+    const newId = createAnonymousVisitorId();
+    localStorage.setItem(LS_SPEECH_STAKES_VISITOR_ID_KEY, newId);
+    return newId;
+  } catch {
+    return createAnonymousVisitorId();
+  }
+}
 
 export default function WeddingHome() {
   const navigate = useNavigate();
@@ -12,6 +38,7 @@ export default function WeddingHome() {
   const [playerName, setPlayerName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const hasTrackedLandingVisitRef = useRef(false);
 
   const [showJoinForm, setShowJoinForm] = useState(false);
 
@@ -130,6 +157,30 @@ export default function WeddingHome() {
     e.preventDefault();
     navigate("/weddinghostlogin");
   }
+
+  useEffect(() => {
+    if (hasTrackedLandingVisitRef.current) return;
+    hasTrackedLandingVisitRef.current = true;
+
+    if (!API_URL) return;
+
+    const visitorId = getOrCreateSpeechStakesVisitorId();
+
+    fetch(`${API_URL}/api/wedding/analytics/landing-visit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        visitorId,
+        pagePath: window.location.pathname,
+        referrer: document.referrer || null,
+        userAgent: navigator.userAgent || null,
+      }),
+    }).catch((err) => {
+      console.error("Landing page visit tracking failed:", err);
+    });
+  }, [API_URL]);
 
   return (
     <div className="home-page">
