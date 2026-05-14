@@ -307,7 +307,7 @@ export default function WeddingHostLogin() {
 
   if (checkingExistingSession) {
     return (
-      <div className="home-container">
+      <div className="home-container login-container">
         <div className="screen wedding-home ss-editorial">
           <div className="ss-card">
             <p className="ss-subtitle">Checking your account...</p>
@@ -326,7 +326,7 @@ export default function WeddingHostLogin() {
     const isCancelledState = isPaymentCancelledPage;
 
     return (
-      <div className="home-container">
+      <div className="home-container login-container">
         <div className="screen wedding-home ss-editorial">
           <div className="ss-card ss-card--purchase">
             {isSuccessState ? (
@@ -440,10 +440,7 @@ export default function WeddingHostLogin() {
                         <>
                           <Icon
                             icon="mdi:lock-outline"
-                            style={{
-                              marginRight: "0.45rem",
-                              fontSize: "1.05rem",
-                            }}
+                            className="ss-btn-icon"
                           />
                           Continue to Checkout
                         </>
@@ -476,17 +473,58 @@ export default function WeddingHostLogin() {
   return (
     <div className="home-container login-container">
       <div className="screen wedding-home ss-editorial">
-        <div className="ss-card">
+        <div className="ss-card ss-card--event-pass">
+          <div className="ss-event-pass-icon-wrap">
+            <Icon
+              icon="streamline:champagne-party-alcohol"
+              className="ss-event-pass-icon"
+            />
+          </div>
+
           <div className="ss-header">
             <h1 className="ss-title">
-              {mode === "create" ? "Create your account" : "Sign in"}
+              {mode === "create" ? "Get your Event Pass" : "Sign in"}
             </h1>
+
             <p className="ss-subtitle ss-subtitle--wide">
               {mode === "create"
-                ? "Enter your email to get started. Then you can purchase your Event Pass and set up your event."
+                ? "Set up your wedding speech game in minutes. Everything you need for one event."
                 : "Sign in to continue managing your event."}
             </p>
           </div>
+
+          {mode === "create" ? (
+            <>
+              <div className="ss-price-hero">
+                <div className="ss-price-hero__amount">€24.99</div>
+                <div className="ss-price-hero__text">
+                  One-time payment for one event
+                </div>
+              </div>
+
+              <div className="ss-reassurance">
+                <Icon icon="mdi:check-circle-outline" />
+                <span>No subscription. No hidden fees.</span>
+              </div>
+
+              {/* <div className="ss-feature-grid">
+                <div className="ss-feature-card">
+                  <Icon icon="mdi:account-group-outline" />
+                  <span>Guest predictions</span>
+                </div>
+
+                <div className="ss-feature-card">
+                  <Icon icon="mdi:microphone-outline" />
+                  <span>Speaker setup</span>
+                </div>
+
+                <div className="ss-feature-card">
+                  <Icon icon="mdi:trophy-outline" />
+                  <span>Live leaderboard</span>
+                </div>
+              </div> */}
+            </>
+          ) : null}
 
           <form onSubmit={handleSubmit} className="ss-form">
             <div className="ss-field">
@@ -513,11 +551,12 @@ export default function WeddingHostLogin() {
             >
               {submitting
                 ? mode === "create"
-                  ? "Creating account..."
+                  ? "Continuing..."
                   : "Signing in..."
                 : mode === "create"
-                  ? "Create account"
+                  ? "Continue"
                   : "Sign in"}
+              {!submitting && mode === "create" ? null : null}
             </button>
 
             <div className="ss-footer ss-footer--muted">
