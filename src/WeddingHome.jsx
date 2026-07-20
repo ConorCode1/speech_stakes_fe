@@ -411,7 +411,7 @@ export default function WeddingHome() {
               <span className="home-final-cta-price-label">
                 Everything you need for one event
               </span>
-              <span className="home-final-cta-price-value">€24.99</span>
+              <span className="home-final-cta-price-value">€9.99</span>
             </div>
 
             <button

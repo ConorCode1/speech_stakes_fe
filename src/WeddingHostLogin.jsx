@@ -408,7 +408,7 @@ export default function WeddingHostLogin() {
                     <div className="ss-purchase-price-card__label">
                       One-time payment
                     </div>
-                    <div className="ss-purchase-price-card__amount">€24.99</div>
+                    <div className="ss-purchase-price-card__amount">€9.99</div>
                     <div className="ss-purchase-price-card__text">
                       One event per purchase. Unlock your Event Pass and start
                       creating your event.
@@ -496,7 +496,7 @@ export default function WeddingHostLogin() {
           {mode === "create" ? (
             <>
               <div className="ss-price-hero">
-                <div className="ss-price-hero__amount">€24.99</div>
+                <div className="ss-price-hero__amount">€9.99</div>
                 <div className="ss-price-hero__text">
                   One-time payment for one event
                 </div>
